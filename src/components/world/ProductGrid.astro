@@ -23,6 +23,8 @@ const { products, title, indexed = false } = Astro.props;
 
 const categories = indexed ? await getCategories() : [];
 const roomOf = (id: number) => categories.find((category) => category.id === id);
+/** Cards sit under the grid's h2 when there is one; otherwise they are the page's h2s. */
+const CardHeading = title ? 'h3' : 'h2';
 ---
 
 <section class="mx-auto max-w-6xl px-5 py-12 lg:px-8 lg:py-16">
@@ -146,14 +148,14 @@ const roomOf = (id: number) => categories.find((category) => category.id === id)
 
             <div class="mt-3 flex items-start justify-between gap-3">
               <div class="min-w-0">
-                <h3 class="truncate text-[0.95rem] text-room-ink">
+                <CardHeading class="truncate text-[0.95rem] text-room-ink">
                   <a
                     href={url(`/product/${product.slug}`)}
                     class="transition-colors after:absolute after:inset-0 after:content-[''] group-hover:text-accent-d group-hover:underline group-hover:decoration-accent group-hover:decoration-2 group-hover:underline-offset-4"
                   >
                     {product.name}
                   </a>
-                </h3>
+                </CardHeading>
                 {/* What the piece is made of — the line that justifies it. */}
                 {product.origin && (
                   <p class="mt-0.5 truncate font-reading text-[0.85rem] leading-relaxed text-room-ink-3">
