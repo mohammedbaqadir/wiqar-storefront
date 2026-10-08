@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://wiqar.sa/sitemap-index.xml
+Sitemap: https://wiqar-storefront.directed-countless.workers.dev/sitemap-index.xml

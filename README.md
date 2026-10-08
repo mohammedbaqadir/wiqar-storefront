@@ -3,7 +3,7 @@
 A curated goods store — ceramics, writing, textiles, leather, optics, audio, light, tools.
 Arabic-first (RTL), statically built with Astro.
 
-**Live:** https://wiqar.sa
+**Live:** https://wiqar-storefront.directed-countless.workers.dev
 
 ## Stack
 
