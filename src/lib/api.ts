@@ -10,6 +10,8 @@ import { toArabicDigits } from '@/lib/format';
 export interface ApiImage {
   url: string;
   alt: string;
+  /** A 600px sibling for grids and the cart, when the catalogue has one. */
+  thumb?: string;
 }
 
 /** A choice the shopper makes: a size, a colour, a measure. */

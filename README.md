@@ -52,8 +52,8 @@ On push to `main`, Cloudflare Workers Builds builds `bun run build` and deploys 
 dashboard. Data changes trigger the same build through the Worker's deploy hook, so the site
 republishes whenever the D1 catalogue changes.
 
-Product photos are placeholder links from royalty-free stock, stored with each product in D1;
-each is replaced by real product photography.
+Product photos are placeholder JPEGs in `public/images` (1200px and 600px variants); D1
+stores their paths, and each is replaced by real product photography.
 
 ## Related project
 

@@ -69,7 +69,7 @@ const CardHeading = title ? 'h3' : 'h2';
           >
             <div class="relative aspect-square w-full overflow-hidden bg-exhibit-2">
               <ProductPhoto
-                path={product.image.url}
+                path={product.image.thumb ?? product.image.url}
                 alt={product.image.alt}
                 class:list={[
                   'size-full object-cover transition-[transform,opacity] duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none group-hover:scale-[1.05]',
@@ -126,7 +126,7 @@ const CardHeading = title ? 'h3' : 'h2';
                   data-product-slug={product.slug}
                   data-product-name={product.name}
                   data-product-price={product.price}
-                  data-product-image={product.image.url}
+                  data-product-image={product.image.thumb ?? product.image.url}
                   data-product-stock={product.quantity ?? ''}
                   aria-label={`أضف ${product.name} إلى السلة`}
                   class="absolute inset-x-3 bottom-3 z-10 min-h-11 items-center justify-center bg-ink/90 px-3 text-sm text-exhibit transition-opacity hover:bg-ink"

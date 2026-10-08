@@ -33,7 +33,7 @@ const gallery = product.images.length > 0 ? product.images : [product.image];
 const showThumbs = gallery.length > 1;
 
 const gone = isOutOfStock(product);
-const thumbnail = product.image.url;
+const thumbnail = product.image.thumb ?? product.image.url;
 
 /** Each thumbnail swaps the stage to the catalogue URL. */
 const stageUrls = gallery.map((image) => image.url);
@@ -130,7 +130,7 @@ const schema = productSchema(product, {
                     class="block size-20 overflow-hidden border border-hairline bg-exhibit-2 opacity-70 transition-opacity hover:opacity-100 aria-pressed:border-outline aria-pressed:opacity-100"
                   >
                     <ProductPhoto
-                      path={image.url}
+                      path={image.thumb ?? image.url}
                       alt=""
                       class="size-full object-cover"
                     />

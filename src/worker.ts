@@ -2,9 +2,10 @@
  * The storefront Worker: static assets, plus one data route.
  *
  * `wrangler.jsonc` sends only /catalog.json here (run_worker_first); everything
- * else is served straight from `dist/`. The route reads the D1 catalogue and
- * answers in the shape src/lib/api.ts expects, so the build fetches its data
- * from the same Worker the site is served from.
+ * else — pages and the self-hosted photos under /images/ — is served straight
+ * from `dist/`. The route reads the D1 catalogue and answers in the shape
+ * src/lib/api.ts expects, so the build fetches its data from the same Worker
+ * the site is served from.
  */
 
 interface D1PreparedStatement {
@@ -39,18 +40,31 @@ const list = (value: unknown): unknown[] => {
   }
 };
 
-const toImage = (url: unknown, alt: unknown) => ({ url: String(url ?? ""), alt: String(alt ?? "") });
+/**
+ * A catalogue image. Paths become absolute against the request origin, and a
+ * `/images/...@1200.jpg` gains its 600px sibling as `thumb` for grids and cart.
+ */
+const toImage = (url: unknown, alt: unknown, origin: string) => {
+  const raw = String(url ?? "");
+  const absolute = raw && !/^https?:\/\//i.test(raw) ? `${origin}${raw}` : raw;
+  const thumb = absolute.replace(/@1200(\.\w+)$/, "@600$1");
+  return {
+    url: absolute,
+    alt: String(alt ?? ""),
+    ...(thumb !== absolute ? { thumb } : {}),
+  };
+};
 
-function toProduct(row: Row, categoryId: Map<string, number>) {
+function toProduct(row: Row, categoryId: Map<string, number>, origin: string) {
   const price = num(row.price);
   const compareAt =
     row.compare_at_price === null || row.compare_at_price === undefined ? null : num(row.compare_at_price);
   const onSale = compareAt !== null && compareAt > price;
   const quantity = row.quantity === null || row.quantity === undefined ? null : num(row.quantity);
   const images = list(row.images)
-    .map((entry) => toImage((entry as Row).url, (entry as Row).alt))
+    .map((entry) => toImage((entry as Row).url, (entry as Row).alt, origin))
     .filter((entry) => entry.url !== "");
-  const fallback = toImage(row.image_url, row.name);
+  const fallback = toImage(row.image_url, row.name, origin);
 
   return {
     id: num(row.id),
@@ -97,7 +111,7 @@ export default {
     return Response.json({
       store: STORE,
       categories: rooms,
-      products: products.results.map((row) => toProduct(row, byName)),
+      products: products.results.map((row) => toProduct(row, byName, url.origin)),
     });
   },
 };
