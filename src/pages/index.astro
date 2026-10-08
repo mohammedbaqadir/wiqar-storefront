@@ -6,13 +6,12 @@ import DrawerRail from '@/components/world/DrawerRail.astro';
 import ProductGrid from '@/components/world/ProductGrid.astro';
 import SiteFooter from '@/components/world/SiteFooter.astro';
 import { getProducts } from '@/lib/api';
-import { shareImage } from '@/lib/images';
 
 const products = await getProducts();
 /** The vitrine piece is designated in the catalogue, not by array order. */
 const lead = products.find((product) => product.featured) ?? products[0];
 const featured = products.filter((product) => product.id !== lead.id).slice(0, 8);
-const share = await shareImage(lead.image.url);
+const share = lead.image.url;
 
 const promises = [
   { term: 'الجودة', note: 'مواد تدوم، وتشطيب لا يتقشّر بعد شهر.' },

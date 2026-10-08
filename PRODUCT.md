@@ -47,9 +47,9 @@ carries it.
   `src/lib/api.ts`, so the source can move again without touching a page.
 - Cart, search, sorting, options and the gallery run client-side as plain TypeScript — no UI
   framework; the entire client bundle is ~12 KB.
-- Photographs are placeholders from royalty-free stock, credited in
-  `src/assets/photos/CREDITS.txt`. They must never be presented as the shop's own photography,
-  and a second image is never shown as another view of the same object unless it truly is one.
+- Photographs are placeholder links from royalty-free stock, stored with each product. They
+  must never be presented as the shop's own photography, and a second image is never shown as
+  another view of the same object unless it truly is one.
 - No accounts, wishlist or reviews exist.
 - The Salla runtime is deliberately **its own project** (`wiqar-backend`, a Cloudflare Worker) so
   this storefront never depends on it structurally. The seam is `src/lib/api.ts`; if that project
@@ -70,8 +70,7 @@ carries it.
 
 - A 35-piece catalogue in Cloudflare D1 with prices, stock, descriptions and image links;
   `options`, `keywords` and `featured` columns exist for enrichment. Categories are a D1 table.
-- Product photographs are placeholder links (royalty-free stock) stored with each product; the
-  earlier local placeholder set remains in `src/assets/photos` and is no longer referenced.
+- Product photographs are placeholder links (royalty-free stock) stored with each product in D1.
 - No reviews, testimonials, press, founder story or customer logos exist. Future work must not
   invent them.
 

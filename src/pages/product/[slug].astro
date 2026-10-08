@@ -16,7 +16,6 @@ import {
   lowStockLabel,
 } from '@/lib/api';
 import { money } from '@/lib/format';
-import { photoUrl, shareImage } from '@/lib/images';
 import { productSchema } from '@/lib/schema';
 import { url } from '@/lib/url';
 
@@ -34,10 +33,10 @@ const gallery = product.images.length > 0 ? product.images : [product.image];
 const showThumbs = gallery.length > 1;
 
 const gone = isOutOfStock(product);
-const thumbnail = await photoUrl(product.image.url, 160);
+const thumbnail = product.image.url;
 
-/** Each thumbnail swaps the stage to this build's own optimised file. */
-const stageUrls = await Promise.all(gallery.map((image) => photoUrl(image.url, 960)));
+/** Each thumbnail swaps the stage to the catalogue URL. */
+const stageUrls = gallery.map((image) => image.url);
 
 const availability = gone
   ? 'نفدت الكمية'
@@ -45,7 +44,7 @@ const availability = gone
     ? lowStockLabel(product)
     : 'متوفّرة';
 
-const share = await shareImage(product.image.url);
+const share = product.image.url;
 const schema = productSchema(product, {
   url: new URL(Astro.url.pathname, Astro.site).href,
   image: share ? new URL(share, Astro.site).href : undefined,
@@ -91,8 +90,6 @@ const schema = productSchema(product, {
           <ProductPhoto
             path={gallery[0].url}
             alt={gallery[0].alt}
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            widths={[480, 720, 960]}
             priority
             data-gallery-main
             class:list={[
@@ -135,8 +132,6 @@ const schema = productSchema(product, {
                     <ProductPhoto
                       path={image.url}
                       alt=""
-                      sizes="80px"
-                      widths={[160]}
                       class="size-full object-cover"
                     />
                   </button>

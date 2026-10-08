@@ -9,7 +9,6 @@ import {
   type ApiProduct,
 } from '@/lib/api';
 import { money } from '@/lib/format';
-import { photoUrl } from '@/lib/images';
 import { normalize, searchText } from '@/lib/search';
 import { url } from '@/lib/url';
 
@@ -24,13 +23,6 @@ const { products, title, indexed = false } = Astro.props;
 
 const categories = indexed ? await getCategories() : [];
 const roomOf = (id: number) => categories.find((category) => category.id === id);
-
-/** Cart thumbnails are client-side, so they need a ready URL. */
-const thumbs = new Map<number, string>();
-for (const product of products) {
-  const thumbnail = await photoUrl(product.image.url, 160);
-  if (thumbnail) thumbs.set(product.id, thumbnail);
-}
 ---
 
 <section class="mx-auto max-w-6xl px-5 py-12 lg:px-8 lg:py-16">
@@ -77,8 +69,6 @@ for (const product of products) {
               <ProductPhoto
                 path={product.image.url}
                 alt={product.image.alt}
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 300px"
-                widths={[240, 360, 480]}
                 class:list={[
                   'size-full object-cover transition-[transform,opacity] duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none group-hover:scale-[1.05]',
                   gone && 'opacity-55',
@@ -134,7 +124,7 @@ for (const product of products) {
                   data-product-slug={product.slug}
                   data-product-name={product.name}
                   data-product-price={product.price}
-                  data-product-image={thumbs.get(product.id)}
+                  data-product-image={product.image.url}
                   data-product-stock={product.quantity ?? ''}
                   aria-label={`أضف ${product.name} إلى السلة`}
                   class="absolute inset-x-3 bottom-3 z-10 min-h-11 items-center justify-center bg-ink/90 px-3 text-sm text-exhibit transition-opacity hover:bg-ink"

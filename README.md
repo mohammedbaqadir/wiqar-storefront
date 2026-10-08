@@ -21,7 +21,7 @@ src/components/  world/ (the store's own parts) · starwind/ (vendored UI)
 src/lib/         api · cart · search · images · schema · format · url
 src/worker.ts    the /catalog.json route — D1 in, storefront-shaped JSON out
 src/data/        theme.ts (the one palette)
-src/assets/      photos (placeholders, now unreferenced) · fonts
+src/assets/      fonts
 src/styles/      world.css (tokens & base) · world-fonts.css · starwind.css
 ```
 
@@ -52,8 +52,8 @@ On push to `main`, Cloudflare Workers Builds builds `bun run build` and deploys 
 dashboard. Data changes trigger the same build through the Worker's deploy hook, so the site
 republishes whenever the D1 catalogue changes.
 
-Product photos are placeholders from royalty-free stock; sources are listed in
-`src/assets/photos/CREDITS.txt` and each is replaced by real product photography.
+Product photos are placeholder links from royalty-free stock, stored with each product in D1;
+each is replaced by real product photography.
 
 ## Related project
 
