@@ -1,0 +1,173 @@
+---
+import '@/styles/starwind.css';
+import '@/styles/world.css';
+import { materials, themeVars } from '@/data/theme';
+
+const themeCss = `:root{${themeVars(materials)}}`;
+
+/**
+ * الجدار — الجولة الرابعة. A lab page, not part of the store.
+ *
+ * Round 3 verdicts: the pool at 22% is right; the grid of small pools is blocky
+ * (repetition, not colour); and the cool #1a1e1b impresses. Hypothesis: a
+ * cool-leaning wall makes the warm objects and champagne pop, where warm walls
+ * were warm-on-warm. And a pool belongs to an exhibit — a catalog at night
+ * needs one wash or one lit piece, not thirty spotlights.
+ */
+
+const walls = [
+  { hex: '#1a1e1b', name: 'زيتوني داكن', note: 'الذي أعجبك' },
+  { hex: '#16201c', name: 'أخضر أعمق', note: 'ميل أخضر أوضح' },
+  { hex: '#191d23', name: 'أردوازي بارد', note: 'ميل أزرق' },
+  { hex: '#1c1b19', name: 'حبر دافئ', note: 'المرجع القديم، للمقارنة' },
+];
+
+const trio = [
+  { key: 'wq-002', name: 'قلم حبر خشبي', lum: 0 },
+  { key: 'wq-025', name: 'دلة قهوة نحاسية', lum: 75 },
+  { key: 'wq-021', name: 'طقم مناديل كتان', lum: 232 },
+];
+
+const grids = [
+  { id: 'per-piece', label: 'حوض لكل قطعة', note: 'المكرر — الذي بدا مبنيًا من طوب' },
+  { id: 'wash', label: 'غسيل جدار واحد', note: 'ضوء واحد يغسل الجدار كله، والقطع تجلس عليه' },
+  { id: 'none', label: 'بلا ضوء', note: 'فراغ وسكون فقط' },
+  { id: 'one-lit', label: 'قطعة واحدة مضاءة', note: 'القطعة الأولى وحدها تحت الضوء' },
+];
+---
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>الجدار — الجولة الرابعة — وقار</title>
+    <style is:inline set:html={themeCss} />
+    <style is:inline>
+      .pool {
+        padding: 1rem 1rem 2.5rem;
+        background: radial-gradient(90% 68% at 50% 92%, rgba(242, 239, 230, 0.22), transparent 74%);
+      }
+      .wash {
+        background: radial-gradient(120% 95% at 50% 118%, rgba(242, 239, 230, 0.11), transparent 72%);
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="mx-auto max-w-6xl px-5 pt-10 lg:px-8">
+      <p class="font-data text-[0.7rem] tracking-[0.2em] text-room-ink-3" dir="ltr">LAB · WALL IV</p>
+      <h1 class="mt-2 font-display text-3xl text-room-ink lg:text-4xl">الجدار — الجولة الرابعة</h1>
+      <p class="mt-3 max-w-2xl font-reading text-lg leading-loose text-room-ink-2">
+        ثبت المقدار: الحوض <span dir="ltr">22%</span>. والملاحظة الأهم: ما بدا مبنيًا من طوب لم يكن
+        اللون، بل التكرار — أربعة حوض صغيرة متجاورة تصير أربعة مستطيلات مضيئة. الحوض عرضٌ لقطعة، لا
+        لكل قطعة. وهذه الجولة تختبر الجدار المائل للبرودة الذي أعجبك، وتختبر كيف تعرض الشبكة نفسها
+        ليلًا.
+      </p>
+    </header>
+
+    <section class="mt-10 bg-deep py-12 text-deep-ink">
+      <div class="mx-auto max-w-6xl px-5 lg:px-8">
+        <div class="border-b border-current/15 pb-4">
+          <h2 class="font-display text-2xl">الجدار</h2>
+          <p class="mt-1 text-xs text-deep-ink-2">قطعة واحدة كبيرة، حوض 22%، على أربعة جدران — الحالة الصعبة: أغمق صورة.</p>
+        </div>
+
+        <div class="mt-6 space-y-10">
+          {walls.map((wall) => (
+            <div>
+              <div class="mb-3 flex items-baseline gap-3">
+                <h3 class="font-display text-lg">{wall.name}</h3>
+                <p class="font-data text-[0.7rem] text-deep-ink-2" dir="ltr">{wall.hex}</p>
+                <p class="text-xs text-deep-ink-2">{wall.note}</p>
+              </div>
+              <div class="p-6" style={`background:${wall.hex}`}>
+                <figure class="max-w-xs">
+                  <div class="pool">
+                    <img
+                      src="/images/wq-002-1-600.jpg"
+                      alt="قلم حبر خشبي"
+                      width="600"
+                      height="750"
+                      loading="lazy"
+                      class="aspect-[4/5] w-full object-cover"
+                    />
+                  </div>
+                  <figcaption class="mt-2 text-[0.65rem] text-deep-ink-2">قلم حبر خشبي</figcaption>
+                </figure>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="mt-12">
+          <div class="mb-3 flex items-baseline gap-3">
+            <h3 class="font-display text-lg">تحقّق على الزيتوني</h3>
+            <p class="text-xs text-deep-ink-2">الداكن والوسط والفاتح، بالحجم الكبير، على <span dir="ltr">#1a1e1b</span>.</p>
+          </div>
+          <div class="grid max-w-3xl grid-cols-3 gap-5 p-6" style="background:#1a1e1b">
+            {trio.map((p) => (
+              <figure>
+                <div class="pool">
+                  <img
+                    src={`/images/${p.key}-1-600.jpg`}
+                    alt={p.name}
+                    width="600"
+                    height="750"
+                    loading="lazy"
+                    class="aspect-[4/5] w-full object-cover"
+                  />
+                </div>
+                <figcaption class="mt-2 truncate text-[0.65rem] text-deep-ink-2">{p.name}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-deep py-12 text-deep-ink">
+      <div class="mx-auto max-w-6xl px-5 lg:px-8">
+        <div class="border-b border-current/15 pb-4">
+          <h2 class="font-display text-2xl">الشبكة ليلًا</h2>
+          <p class="mt-1 text-xs text-deep-ink-2">أربع طرائق لعرض صف من القطع على الجدار الزيتوني.</p>
+        </div>
+
+        {grids.map((g) => (
+          <div class="mt-8">
+            <div class="mb-3 flex items-baseline gap-3">
+              <h3 class="font-display text-lg">{g.label}</h3>
+              <p class="text-xs text-deep-ink-2">{g.note}</p>
+            </div>
+            <div class={`grid max-w-3xl grid-cols-3 gap-5 bg-deep p-5 ${g.id === 'wash' ? 'wash' : ''}`}>
+              {trio.map((p, i) => (
+                <figure>
+                  <div class={g.id === 'per-piece' || (g.id === 'one-lit' && i === 0) ? 'pool' : ''}>
+                    <img
+                      src={`/images/${p.key}-1-600.jpg`}
+                      alt={p.name}
+                      width="600"
+                      height="750"
+                      loading="lazy"
+                      class="aspect-[4/5] w-full object-cover"
+                    />
+                  </div>
+                </figure>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-6xl px-5 py-12 lg:px-8">
+      <h2 class="font-display text-2xl text-room-ink">الأسئلة</h2>
+      <ul class="mt-4 max-w-2xl list-disc space-y-2 pe-6 font-reading text-base leading-loose text-room-ink-2">
+        <li>الجدار: هل الزيتوني <span dir="ltr">#1a1e1b</span> هو الصحيح، أم أن الأخضر الأعمق أو الأردوازي أصدق مع الدفء؟</li>
+        <li>الشبكة ليلًا: الغسيل الواحد، أم بلا ضوء، أم قطعة واحدة مضاءة؟</li>
+        <li>وهل ما زال الحوض صحيحًا على القطعة الواحدة حين تكبر؟</li>
+      </ul>
+    </section>
+  </body>
+</html>
