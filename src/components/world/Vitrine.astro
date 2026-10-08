@@ -36,7 +36,7 @@ const gone = isOutOfStock(product);
           {product.name}
         </h1>
         <p class="max-w-xl font-reading text-base leading-loose text-exhibit/85 lg:text-lg">
-          {product.standard}
+          {product.standard || product.description}
         </p>
         <div class="mt-2 flex flex-wrap items-center gap-x-5 gap-y-3">
           <span class="font-data text-lg text-exhibit">{money(product.price)}</span>

@@ -153,7 +153,7 @@ const schema = productSchema(product, {
             <span dir="ltr">{product.sku}</span>
             {category && <span aria-hidden="true">·</span>}
             {category && <a href={url(`/category/${category.slug}`)} class="transition-colors hover:text-room-ink">{category.name}</a>}
-            <span class="ms-auto">{product.origin}</span>
+            {product.origin && <span class="ms-auto">{product.origin}</span>}
           </div>
 
           <h1 class="font-display text-4xl leading-tight text-room-ink lg:text-5xl">
@@ -251,14 +251,18 @@ const schema = productSchema(product, {
         </div>
 
         <dl class="grid gap-4 border-t border-hairline pt-6 text-sm sm:grid-cols-2">
-          <div class="space-y-1">
-            <dt class="font-data text-[0.7rem] tracking-[0.12em] text-room-ink-3">
-              <a href={`${url('/')}#standard`} class="transition-colors hover:text-room-ink">
-                المعيار
-              </a>
-            </dt>
-            <dd class="leading-relaxed text-room-ink-2">{product.standard}</dd>
-          </div>
+          {
+            product.standard && (
+              <div class="space-y-1">
+                <dt class="font-data text-[0.7rem] tracking-[0.12em] text-room-ink-3">
+                  <a href={`${url('/')}#standard`} class="transition-colors hover:text-room-ink">
+                    المعيار
+                  </a>
+                </dt>
+                <dd class="leading-relaxed text-room-ink-2">{product.standard}</dd>
+              </div>
+            )
+          }
           <div class="space-y-1">
             <dt class="font-data text-[0.7rem] tracking-[0.12em] text-room-ink-3">التوفّر</dt>
             <dd class="leading-relaxed text-room-ink-2">

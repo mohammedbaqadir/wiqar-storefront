@@ -165,9 +165,11 @@ for (const product of products) {
                   </a>
                 </h3>
                 {/* What the piece is made of — the line that justifies it. */}
-                <p class="mt-0.5 truncate font-reading text-[0.85rem] leading-relaxed text-room-ink-3">
-                  {product.origin}
-                </p>
+                {product.origin && (
+                  <p class="mt-0.5 truncate font-reading text-[0.85rem] leading-relaxed text-room-ink-3">
+                    {product.origin}
+                  </p>
+                )}
               </div>
 
               <div class="shrink-0 text-end">

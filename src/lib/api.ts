@@ -1,12 +1,10 @@
-import catalog from '@/data/catalog.json';
 import { toArabicDigits } from '@/lib/format';
 
 /**
  * The store's data seam. Every page reads the shop through this file and
- * nothing else, so pointing the storefront at Salla later means rewriting this
- * one module — the shapes below stay, the source changes.
- *
- * Today the source is a JSON catalogue that mimics what the API will return.
+ * nothing else. The catalogue comes from the /catalog.json route on the store's
+ * own Worker (src/worker.ts), which reads the D1 catalogue; the shapes below
+ * stay the contract, so the source can move again without touching a page.
  */
 
 export interface ApiImage {
@@ -68,28 +66,48 @@ interface ApiCatalog {
   products: ApiProduct[];
 }
 
-const data = catalog as unknown as ApiCatalog;
+const CATALOG_URL =
+  import.meta.env.CATALOG_URL ?? 'https://wiqar-storefront.directed-countless.workers.dev/catalog.json';
 
-export const getStore = async (): Promise<ApiStore> => data.store;
+let pending: Promise<ApiCatalog> | null = null;
 
-export const getCategories = async (): Promise<ApiCategory[]> => data.categories;
+/**
+ * The catalogue is fetched once per build (or dev server). A bad response stops
+ * the build on purpose: a shop page with no products is worse than a failure.
+ */
+const load = (): Promise<ApiCatalog> => {
+  if (!pending) {
+    pending = fetch(CATALOG_URL).then((response) => {
+      if (!response.ok) {
+        throw new Error(`catalogue fetch failed: ${response.status} ${response.statusText} — ${CATALOG_URL}`);
+      }
+      return response.json() as Promise<ApiCatalog>;
+    });
+  }
+  return pending;
+};
 
-export const getProducts = async (): Promise<ApiProduct[]> => data.products;
+export const getStore = async (): Promise<ApiStore> => (await load()).store;
+
+export const getCategories = async (): Promise<ApiCategory[]> => (await load()).categories;
+
+export const getProducts = async (): Promise<ApiProduct[]> => (await load()).products;
 
 export const getProduct = async (slug: string): Promise<ApiProduct | null> =>
-  data.products.find((product) => product.slug === slug) ?? null;
+  (await load()).products.find((product) => product.slug === slug) ?? null;
 
 export const getCategory = async (id: number): Promise<ApiCategory | null> =>
-  data.categories.find((category) => category.id === id) ?? null;
+  (await load()).categories.find((category) => category.id === id) ?? null;
 
 export const getProductsInCategory = async (categoryId: number): Promise<ApiProduct[]> =>
-  data.products.filter((product) => product.category_id === categoryId);
+  (await load()).products.filter((product) => product.category_id === categoryId);
 
 /**
  * Closest pieces first: the same room, then shared keywords, then a nearby price.
  * Deterministic, so the row never reshuffles between builds.
  */
 export const getRelated = async (product: ApiProduct, limit = 4): Promise<ApiProduct[]> => {
+  const { products } = await load();
   const words = new Set(product.keywords ?? []);
 
   const score = (other: ApiProduct): number => {
@@ -101,7 +119,7 @@ export const getRelated = async (product: ApiProduct, limit = 4): Promise<ApiPro
     return spread <= 1.6 ? points + 1 : points;
   };
 
-  return data.products
+  return products
     .filter((other) => other.id !== product.id)
     .map((other) => ({ product: other, points: score(other) }))
     .sort((a, b) => b.points - a.points || a.product.price - b.product.price)

@@ -25,10 +25,21 @@ const {
 } = Astro.props;
 
 const source = photo(path);
+const remote = /^https?:\/\//i.test(path);
 ---
 
 {
-  source ? (
+  remote ? (
+    /* Catalogue URLs pass through as-is: no build-time optimisation for those. */
+    <img
+      src={path}
+      alt={alt}
+      loading={priority ? 'eager' : 'lazy'}
+      fetchpriority={priority ? 'high' : undefined}
+      class={className}
+      {...rest}
+    />
+  ) : source ? (
     <Picture
       src={source}
       alt={alt}

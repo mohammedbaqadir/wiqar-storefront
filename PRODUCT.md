@@ -42,8 +42,9 @@ carries it.
 
 ## Capabilities and Constraints
 
-- Static Astro site on Cloudflare Workers (31 pages). Catalogue data reads through one module,
-  `src/lib/api.ts`, so a real backend replaces it without touching a single page.
+- Static Astro site on Cloudflare Workers (46 pages). The catalogue lives in Cloudflare D1 and
+  is served to the build by the store's own Worker; pages read it through one module,
+  `src/lib/api.ts`, so the source can move again without touching a page.
 - Cart, search, sorting, options and the gallery run client-side as plain TypeScript — no UI
   framework; the entire client bundle is ~12 KB.
 - Photographs are placeholders from royalty-free stock, credited in
@@ -67,10 +68,10 @@ carries it.
 
 ## Evidence on Hand
 
-- A 16-piece dummy catalogue with prices, stock, options and Arabic search keywords
-  (`src/data/catalog.json`).
-- Placeholder photography for 16 pieces, 13 of them with a second image that is **not** the same
-  object.
+- A 35-piece catalogue in Cloudflare D1 with prices, stock, descriptions and image links;
+  `options`, `keywords` and `featured` columns exist for enrichment. Categories are a D1 table.
+- Product photographs are placeholder links (royalty-free stock) stored with each product; the
+  earlier local placeholder set remains in `src/assets/photos` and is no longer referenced.
 - No reviews, testimonials, press, founder story or customer logos exist. Future work must not
   invent them.
 

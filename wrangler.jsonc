@@ -1,8 +1,18 @@
 {
   "name": "wiqar-storefront",
+  "main": "src/worker.ts",
   "compatibility_date": "2026-10-08",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/catalog.json"],
     "not_found_handling": "404-page"
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "CATALOG_DB",
+      "database_name": "wiqar-products",
+      "database_id": "e65668a9-7132-47b1-8e68-3f818d47cca4"
+    }
+  ]
 }

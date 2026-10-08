@@ -19,15 +19,18 @@ src/pages/       routes: home, catalog, category/[slug], product/[slug], search,
 src/layouts/     Base.astro — theme vars, meta/OG, skip link, cart, image fade-in
 src/components/  world/ (the store's own parts) · starwind/ (vendored UI)
 src/lib/         api · cart · search · images · schema · format · url
-src/data/        catalog.json (API-shaped) · theme.ts (the one palette)
-src/assets/      photos (optimised at build) · fonts
+src/worker.ts    the /catalog.json route — D1 in, storefront-shaped JSON out
+src/data/        theme.ts (the one palette)
+src/assets/      photos (placeholders, now unreferenced) · fonts
 src/styles/      world.css (tokens & base) · world-fonts.css · starwind.css
 ```
 
 ## How the data flows
 
-`src/data/catalog.json` → `src/lib/api.ts` → pages, at build time. Nothing else reads the
-catalogue: swapping the mock for a real backend means rewriting `api.ts` and nothing else.
+Cloudflare D1 `wiqar-products` → `/catalog.json` on the store's own Worker (`src/worker.ts`) →
+`src/lib/api.ts` → pages, at build time. Nothing else reads the catalogue. The local agent in
+`../data` keeps D1 in sync; after a change it pings the Worker's deploy hook, which rebuilds and
+publishes the site.
 
 Cart, search suggestions, sorting, the gallery and product options run client-side as five
 small plain-TypeScript scripts — no UI framework.
@@ -44,9 +47,10 @@ small plain-TypeScript scripts — no UI framework.
 
 ## Deploy
 
-On push to `main`, Cloudflare Workers Builds runs `bun run build` and deploys `dist/` to the
-`wiqar-storefront` Worker. The Worker's shape lives in `wrangler.jsonc`; the domain is attached
-in the Cloudflare dashboard.
+On push to `main`, Cloudflare Workers Builds builds `bun run build` and deploys the
+`wiqar-storefront` Worker (config in `wrangler.jsonc`); the domain is attached in the Cloudflare
+dashboard. Data changes trigger the same build through the Worker's deploy hook, so the site
+republishes whenever the D1 catalogue changes.
 
 Product photos are placeholders from royalty-free stock; sources are listed in
 `src/assets/photos/CREDITS.txt` and each is replaced by real product photography.
