@@ -1,0 +1,164 @@
+---
+import '@/styles/starwind.css';
+import '@/styles/world.css';
+import { materials, themeVars } from '@/data/theme';
+
+const themeCss = `:root{${themeVars(materials)}}`;
+
+/**
+ * اختبار الإضاءة — a lab page, not part of the store.
+ *
+ * Ten pieces spanning the catalogue's full light range (a near-black photo to a
+ * near-white one), each shown on the day ground and the night ground, with four
+ * mounting treatments. The question: which photos live on dark walls, and does
+ * the type hold there?
+ */
+
+const picks = [
+  { key: 'wq-002', name: 'قلم حبر خشبي', lum: 0 },
+  { key: 'wq-019', name: 'سجادة صلاة مبطّنة', lum: 5 },
+  { key: 'wq-023', name: 'طقم فنجان قهوة عربي', lum: 13 },
+  { key: 'wq-032', name: 'حزام جلد كلاسيكي', lum: 41 },
+  { key: 'wq-013', name: 'ماء ورد مقطر', lum: 63 },
+  { key: 'wq-025', name: 'دلة قهوة نحاسية', lum: 75 },
+  { key: 'wq-001', name: 'قلم معدني بملمس مصقول', lum: 140 },
+  { key: 'wq-033', name: 'حافظة بطاقات جلدية', lum: 177 },
+  { key: 'wq-014', name: 'عطر عنبر هادئ', lum: 211 },
+  { key: 'wq-021', name: 'طقم مناديل كتان', lum: 232 },
+];
+
+const treatments = [
+  { id: 'bare', label: 'مباشر', note: 'الصورة على الأرضية مباشرة' },
+  { id: 'plinth', label: 'منصّة', note: 'الصورة على سطح أفتح قليلًا' },
+  { id: 'frame', label: 'إطار', note: 'خط شعري وهامش حول الصورة' },
+  { id: 'spot', label: 'ضوء', note: 'هالة ضوء خلف القطعة' },
+];
+
+const sample = 'كل قطعة تصل إلى المتجر تمرّ بثلاثة أسئلة: هل تُصنع كما ينبغي؟ هل تخدم استعمالًا حقيقيًا؟ وهل يبقى سعرها معقولًا بعد سنوات؟ ما لا يجتاز الأسئلة الثلاثة لا يُعرض — ولذلك قائمة المتجر قصيرة دائمًا.';
+---
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>اختبار الإضاءة — وقار</title>
+    <style is:inline set:html={themeCss} />
+    <style is:inline>
+      [data-ground='day'] {
+        --lab-surface: #f7f5ef;
+        --lab-frame: rgba(17, 17, 16, 0.22);
+        --lab-spot: rgba(255, 255, 255, 0.75);
+      }
+      [data-ground='night'] {
+        --lab-surface: #23211e;
+        --lab-frame: rgba(242, 239, 230, 0.22);
+        --lab-spot: rgba(242, 239, 230, 0.1);
+      }
+      .lab-plinth {
+        padding: 0.5rem;
+        background: var(--lab-surface);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      }
+      .lab-frame {
+        padding: 0.5rem;
+        border: 1px solid var(--lab-frame);
+      }
+      .lab-spot {
+        padding: 0.5rem;
+        background: radial-gradient(65% 55% at 50% 42%, var(--lab-spot), transparent 72%);
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="mx-auto max-w-6xl px-5 pt-10 lg:px-8">
+      <p class="font-data text-[0.7rem] tracking-[0.2em] text-room-ink-3" dir="ltr">LAB · LIGHTING</p>
+      <h1 class="mt-2 font-display text-3xl text-room-ink lg:text-4xl">اختبار الإضاءة</h1>
+      <p class="mt-3 max-w-2xl font-reading text-lg leading-loose text-room-ink-2">
+        صفحة اختبار، ليست جزءًا من المتجر. عشرة منتجات بمدى إضاءة كامل — من صورة شبه سوداء إلى خلفية
+        بيضاء — معروضة على أرضية النهار وأرضية الليل، بأربع طرائق عرض. السؤال: أيّ الصور تعيش على
+        الجدار الليلي، وأيّها تختفي؟ وهل تصمد الحروف هناك؟
+      </p>
+    </header>
+
+    {
+      (
+        [
+          { id: 'day', title: 'نهار', ground: 'bg-room text-room-ink', sub: 'text-room-ink-3' },
+          { id: 'night', title: 'ليل', ground: 'bg-deep text-deep-ink', sub: 'text-deep-ink-2' },
+        ] as const
+      ).map((world) => (
+        <section data-ground={world.id} class={`mt-10 py-12 ${world.ground}`}>
+          <div class="mx-auto max-w-6xl px-5 lg:px-8">
+            <div class="flex items-baseline gap-4 border-b border-current/15 pb-4">
+              <h2 class="font-display text-2xl">{world.title}</h2>
+              <p class={`text-xs ${world.sub}`}>الأرضية: {world.id === 'day' ? '#edeae3' : '#1c1b19'}</p>
+            </div>
+
+            {treatments.map((t) => (
+              <div class="mt-8">
+                <div class="mb-3 flex items-baseline gap-3">
+                  <h3 class="font-display text-lg">{t.label}</h3>
+                  <p class={`text-xs ${world.sub}`}>{t.note}</p>
+                </div>
+                <div class="grid grid-cols-5 gap-2 md:grid-cols-10">
+                  {picks.map((p, i) => (
+                    <figure>
+                      <div class={`lab-${t.id}`}>
+                        <img
+                          src={`/images/${p.key}-1-600.jpg`}
+                          alt={p.name}
+                          width="600"
+                          height="750"
+                          loading="lazy"
+                          class="aspect-[4/5] w-full object-cover"
+                        />
+                      </div>
+                      {t.id === 'bare' && (
+                        <figcaption class={`mt-1.5 truncate text-[0.62rem] ${world.sub}`}>
+                          {p.name}
+                        </figcaption>
+                      )}
+                    </figure>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            <div class="mt-10 grid max-w-3xl grid-cols-2 gap-4">
+              <figure>
+                <img src="/images/wq-002-1-1200.jpg" alt="قلم حبر خشبي" width="1200" height="1500" loading="lazy" class="w-full" />
+                <figcaption class={`mt-1.5 text-xs ${world.sub}`}>أغمق صورة — قلم حبر خشبي</figcaption>
+              </figure>
+              <figure>
+                <img src="/images/wq-021-1-1200.jpg" alt="طقم مناديل كتان" width="1200" height="1500" loading="lazy" class="w-full" />
+                <figcaption class={`mt-1.5 text-xs ${world.sub}`}>أفتح صورة — طقم مناديل كتان</figcaption>
+              </figure>
+            </div>
+
+            <div class="mt-10 max-w-prose space-y-4 border-t border-current/15 pt-6">
+              <h3 class="font-display text-xl">الحروف على هذه الأرضية</h3>
+              <p class="font-display text-3xl leading-snug">الجودة والذوق والقيمة في رتبة واحدة</p>
+              <p class="font-reading text-lg leading-loose">{sample}</p>
+              <p class="font-reading text-xl">٢٩٠ ر.س · ٤٢٠ ر.س · ١٢٥٠ ر.س</p>
+              <p class="font-data text-sm" dir="ltr">WQ-001 · WQ-021 · WQ-035</p>
+            </div>
+          </div>
+        </section>
+      ))
+    }
+
+    <section class="mx-auto max-w-6xl px-5 py-12 lg:px-8">
+      <h2 class="font-display text-2xl text-room-ink">ما الذي ننظر إليه</h2>
+      <ul class="mt-4 max-w-2xl list-disc space-y-2 pe-6 font-reading text-base leading-loose text-room-ink-2">
+        <li>الصور الداكنة: هل تختفي على الجدار الليلي أم تظهر كأنها مضاءة؟</li>
+        <li>الصور الفاتحة: هل تطفو كبطاقة بيضاء أم تبقى جزءًا من الجدار؟</li>
+        <li>«ضوء» مقابل «منصّة»: أيهما أهدأ، وأيهما يبدو أرخص؟</li>
+        <li>الحروف: هل يبقى خط أميري مقروءًا على العمق، وهل تحتاج الأرضية الليلية وزنًا أثقل أو حجمًا أكبر؟</li>
+        <li>حافة الصفحة: هل اللون #1c1b19 (لون التذييل الحالي) هو العمق الصحيح للمعرض، أم يجب أن يكون أدفأ أو أغمق؟</li>
+      </ul>
+    </section>
+  </body>
+</html>
