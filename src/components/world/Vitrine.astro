@@ -21,29 +21,29 @@ const gone = isOutOfStock(product);
       priority
       class="absolute inset-0 size-full object-cover"
     />
-    <div class="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/20 to-ink/5"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-scrim/75 via-scrim/20 to-scrim/5"></div>
 
     <div class="absolute inset-x-0 bottom-0">
       <div class="mx-auto flex max-w-6xl flex-col items-start gap-3 px-5 pb-10 lg:px-8 lg:pb-14">
-        <p class="flex items-center gap-3 font-data text-[0.7rem] text-exhibit/70">
+        <p class="flex items-center gap-3 font-data text-[0.7rem] text-on-photo/70">
           <span class="tracking-normal">المختارة</span>
-          <span aria-hidden="true" class="h-px w-6 bg-exhibit/40"></span>
+          <span aria-hidden="true" class="h-px w-6 bg-on-photo/40"></span>
           <span class="tracking-[0.2em]" dir="ltr">{product.sku}</span>
         </p>
-        <h1 class="font-display text-4xl leading-tight text-exhibit lg:text-6xl">
+        <h1 class="font-display text-4xl leading-tight text-on-photo lg:text-6xl">
           {product.name}
         </h1>
-        <p class="max-w-xl font-reading text-base leading-loose text-exhibit/85 lg:text-lg">
+        <p class="max-w-xl font-reading text-base leading-loose text-on-photo/85 lg:text-lg">
           {product.standard || product.description}
         </p>
         <div class="mt-2 flex flex-wrap items-center gap-x-5 gap-y-3">
-          <span class="font-data text-lg text-exhibit">{money(product.price)}</span>
+          <span class="font-data text-lg text-on-photo">{money(product.price)}</span>
           {
             gone ? (
-              <span class="font-data text-[0.7rem] text-exhibit/70">نفدت الكمية</span>
+              <span class="font-data text-[0.7rem] text-on-photo/70">نفدت الكمية</span>
             ) : (
               isLowStock(product) && (
-                <span class="font-data text-[0.7rem] text-exhibit/70">{lowStockLabel(product)}</span>
+                <span class="font-data text-[0.7rem] text-on-photo/70">{lowStockLabel(product)}</span>
               )
             )
           }

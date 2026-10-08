@@ -45,6 +45,11 @@
     color-scheme: light;
   }
 
+  /* the night room: form controls and scrollbars follow */
+  html[data-world='night'] {
+    color-scheme: dark;
+  }
+
   /* the room, lit from above */
   body {
     background-color: var(--wq-room);
@@ -206,5 +211,26 @@ html[data-filtering] [data-client-filter] {
 
   [data-quick-add] {
     transition: none;
+  }
+}
+
+/* ── the two worlds ───────────────────────────────────────────
+   Photo mounts are a lit plinth by day and a pool of light at
+   night — the treatment chosen in the lighting tests. */
+.wq-mount {
+  background-color: var(--wq-exhibit-2);
+}
+
+html[data-world='night'] .wq-mount {
+  background-color: transparent;
+  background-image: radial-gradient(85% 62% at 50% 92%, rgba(242, 239, 230, 0.22), transparent 74%);
+  padding: 0.9rem 0.9rem 1.7rem;
+}
+
+/* Night grids breathe: three across on wide screens, roomier rows. */
+@media (min-width: 1024px) {
+  html[data-world='night'] .wq-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 3rem;
   }
 }
