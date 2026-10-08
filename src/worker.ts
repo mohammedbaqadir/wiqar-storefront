@@ -47,7 +47,7 @@ const list = (value: unknown): unknown[] => {
 const toImage = (url: unknown, alt: unknown, origin: string) => {
   const raw = String(url ?? "");
   const absolute = raw && !/^https?:\/\//i.test(raw) ? `${origin}${raw}` : raw;
-  const thumb = absolute.replace(/@1200(\.\w+)$/, "@600$1");
+  const thumb = absolute.replace(/-1200(\.\w+)$/, "-600$1");
   return {
     url: absolute,
     alt: String(alt ?? ""),
