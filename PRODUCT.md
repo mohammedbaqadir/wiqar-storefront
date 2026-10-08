@@ -42,7 +42,7 @@ carries it.
 
 ## Capabilities and Constraints
 
-- Static Astro site on GitHub Pages (31 pages). Catalogue data reads through one module,
+- Static Astro site on Cloudflare Workers (31 pages). Catalogue data reads through one module,
   `src/lib/api.ts`, so a real backend replaces it without touching a single page.
 - Cart, search, sorting, options and the gallery run client-side as plain TypeScript — no UI
   framework; the entire client bundle is ~12 KB.

@@ -1,5 +1,5 @@
 {
-  "name": "wiqar",
+  "name": "wiqar-storefront",
   "type": "module",
   "version": "0.0.1",
   "engines": {
@@ -9,6 +9,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "deploy": "bun run build && wrangler deploy",
     "astro": "astro"
   },
   "dependencies": {
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "wrangler": "^4.148.0"
   }
 }

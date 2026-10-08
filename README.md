@@ -3,7 +3,7 @@
 A curated goods store — ceramics, writing, textiles, leather, optics, audio, light, tools.
 Arabic-first (RTL), statically built with Astro.
 
-**Live:** https://mohammedbaqadir.github.io/wiqar/
+**Live:** https://wiqar.sa
 
 ## Stack
 
@@ -40,18 +40,20 @@ small plain-TypeScript scripts — no UI framework.
 | `bun run dev` | dev server (see `AGENTS.md` for background mode) |
 | `bun run build` | build to `dist/` |
 | `bun run preview` | serve the build locally |
+| `bun run deploy` | build, then deploy to Cloudflare Workers |
 
 ## Deploy
 
-Push to `main` — GitHub Actions builds and publishes to GitHub Pages (`wiqar`).
+On push to `main`, Cloudflare Workers Builds runs `bun run build` and deploys `dist/` to the
+`wiqar-storefront` Worker. The Worker's shape lives in `wrangler.jsonc`; the domain is attached
+in the Cloudflare dashboard.
 
 Product photos are placeholders from royalty-free stock; sources are listed in
 `src/assets/photos/CREDITS.txt` and each is replaced by real product photography.
 
-## Related projects
+## Related project
 
-Two siblings, each in its own repository. Neither is required for this one to build or run:
+One sibling, in its own repository. It is not required for this one to build or run:
 
-- **`wiqar-theme`** — the parked Salla Twilight theme: the same world, expressed in Twig.
 - **`wiqar-backend`** — the runtime that talks to Salla (catalogue, cart, checkout, token) for the
   day this storefront goes headless. `src/lib/api.ts` is the seam it plugs into.
