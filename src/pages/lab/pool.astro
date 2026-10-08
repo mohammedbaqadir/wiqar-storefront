@@ -1,0 +1,153 @@
+---
+import '@/styles/starwind.css';
+import '@/styles/world.css';
+import { materials, themeVars } from '@/data/theme';
+
+const themeCss = `:root{${themeVars(materials)}}`;
+
+/**
+ * حوض ضوء — الجولة الثالثة. A lab page, not part of the store.
+ *
+ * Round 2 verdict: the light pool wins the night. Two dials remain: how strong
+ * the light is, and which wall carries it.
+ */
+
+const trio = [
+  { key: 'wq-002', name: 'قلم حبر خشبي', lum: 0 },
+  { key: 'wq-025', name: 'دلة قهوة نحاسية', lum: 75 },
+  { key: 'wq-021', name: 'طقم مناديل كتان', lum: 232 },
+];
+
+const walls = [
+  { hex: '#1c1b19', name: 'حبر التذييل', note: 'الحالي' },
+  { hex: '#221e18', name: 'فحم دافئ', note: 'أكثر دفئًا' },
+  { hex: '#26221a', name: 'عنبري عميق', note: 'أفتح، أدفأ' },
+  { hex: '#1a1e1b', name: 'زيتوني داكن', note: 'بارد قليلًا' },
+];
+
+const strengths = [
+  { id: 'soft', label: 'خافت', alpha: 0.14, note: 'ضوء مكتوم' },
+  { id: 'mid', label: 'كما في الجولة الثانية', alpha: 0.22, note: 'المقدار الذي رأيته' },
+  { id: 'strong', label: 'قوي', alpha: 0.3, note: 'ضوء واضح' },
+];
+---
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>حوض ضوء — الجولة الثالثة — وقار</title>
+    <style is:inline set:html={themeCss} />
+    <style is:inline>
+      .pool {
+        padding: 1rem 1rem 2.5rem;
+        background: radial-gradient(90% 68% at 50% 92%, var(--pool), transparent 74%);
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="mx-auto max-w-6xl px-5 pt-10 lg:px-8">
+      <p class="font-data text-[0.7rem] tracking-[0.2em] text-room-ink-3" dir="ltr">LAB · POOL III</p>
+      <h1 class="mt-2 font-display text-3xl text-room-ink lg:text-4xl">حوض ضوء — الجولة الثالثة</h1>
+      <p class="mt-3 max-w-2xl font-reading text-lg leading-loose text-room-ink-2">
+        الجولة الثانية حسمت الطريقة: حوض الضوء. بقي مقداران: شدّة الضوء، والجدار الذي يحمله. لا شيء
+        آخر في هذه الصفحة.
+      </p>
+    </header>
+
+    <section class="mt-10 bg-deep py-12 text-deep-ink">
+      <div class="mx-auto max-w-6xl px-5 lg:px-8">
+        <div class="border-b border-current/15 pb-4">
+          <h2 class="font-display text-2xl">شدّة الضوء</h2>
+          <p class="mt-1 text-xs text-deep-ink-2">على الجدار الحالي <span dir="ltr">#1c1b19</span> — ثلاث شدّات، القطع الثلاث نفسها.</p>
+        </div>
+
+        <div class="mt-6 space-y-8">
+          {strengths.map((s) => (
+            <div>
+              <div class="mb-3 flex items-baseline gap-3">
+                <h3 class="font-display text-lg">{s.label}</h3>
+                <p class="text-xs text-deep-ink-2">{s.note}</p>
+              </div>
+              <div class="grid max-w-2xl grid-cols-3 gap-4 bg-deep p-4">
+                {trio.map((p) => (
+                  <figure>
+                    <div class="pool" style={`--pool: rgba(242, 239, 230, ${s.alpha})`}>
+                      <img
+                        src={`/images/${p.key}-1-600.jpg`}
+                        alt={p.name}
+                        width="600"
+                        height="750"
+                        loading="lazy"
+                        class="aspect-[4/5] w-full object-cover"
+                      />
+                    </div>
+                    <figcaption class="mt-1.5 truncate text-[0.62rem] text-deep-ink-2">{p.name}</figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-deep py-12 text-deep-ink">
+      <div class="mx-auto max-w-6xl px-5 lg:px-8">
+        <div class="border-b border-current/15 pb-4">
+          <h2 class="font-display text-2xl">الجدار</h2>
+          <p class="mt-1 text-xs text-deep-ink-2">الحوض بمقدار الجولة الثانية، على أربعة جدران.</p>
+        </div>
+
+        <div class="mt-6 space-y-8">
+          {walls.map((wall) => (
+            <div>
+              <div class="mb-3 flex items-baseline gap-3">
+                <h3 class="font-display text-lg">{wall.name}</h3>
+                <p class="font-data text-[0.7rem] text-deep-ink-2" dir="ltr">{wall.hex}</p>
+                <p class="text-xs text-deep-ink-2">{wall.note}</p>
+              </div>
+              <div class="grid max-w-2xl grid-cols-3 gap-4 p-4" style={`background:${wall.hex}`}>
+                {trio.map((p) => (
+                  <figure>
+                    <div class="pool" style="--pool: rgba(242, 239, 230, 0.22)">
+                      <img
+                        src={`/images/${p.key}-1-600.jpg`}
+                        alt={p.name}
+                        width="600"
+                        height="750"
+                        loading="lazy"
+                        class="aspect-[4/5] w-full object-cover"
+                      />
+                    </div>
+                    <figcaption class="mt-1.5 truncate text-[0.62rem] text-deep-ink-2">{p.name}</figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="mt-10 max-w-xl" style="background:#1c1b19">
+          <figure class="p-6">
+            <div class="pool" style="--pool: rgba(242, 239, 230, 0.22)">
+              <img src="/images/wq-002-1-1200.jpg" alt="قلم حبر خشبي" width="1200" height="1500" loading="lazy" class="w-full" />
+            </div>
+            <figcaption class="mt-2 text-xs text-deep-ink-2">الحالة الصعبة — أغمق صورة داخل الحوض</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-6xl px-5 py-12 lg:px-8">
+      <h2 class="font-display text-2xl text-room-ink">السؤالان</h2>
+      <ul class="mt-4 max-w-2xl list-disc space-y-2 pe-6 font-reading text-base leading-loose text-room-ink-2">
+        <li>الشدّة: خافت، أم كما رأيته، أم قوي؟</li>
+        <li>الجدار: هل يبقى <span dir="ltr">#1c1b19</span>، أم أن الدفء <span dir="ltr">#26221a</span> لم يكن الخيار الأنسب في الجولة السابقة لأن المنصّة البيضاء كانت تتناقض معه، بينما الضوء ينسجم معه أكثر؟</li>
+      </ul>
+    </section>
+  </body>
+</html>
