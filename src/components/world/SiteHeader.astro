@@ -8,12 +8,12 @@ const links = [{ href: url('/catalog'), label: 'المقتنيات' }];
   <div
     class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-2 text-[0.75rem] text-room-ink-3 lg:px-8"
   >
-    <a href={url('/service#shipping')} class="transition-colors hover:text-room-ink">
+    <a href={url('/service#shipping')} class="font-medium transition-colors hover:text-room-ink">
       توصيل مجاني للطلبات فوق ٥٠٠ ر.س
     </a>
     <a
       href={url('/service#returns')}
-      class="hidden transition-colors hover:text-room-ink sm:inline"
+      class="hidden font-medium transition-colors hover:text-room-ink sm:inline"
     >
       إرجاع خلال ١٤ يومًا · الدفع عند الاستلام متاح
     </a>
@@ -35,7 +35,7 @@ const links = [{ href: url('/catalog'), label: 'المقتنيات' }];
         links.map((link) => (
           <a
             href={link.href}
-            class="text-room-ink-2 transition-colors hover:text-room-ink hover:underline hover:decoration-accent hover:decoration-2 hover:underline-offset-4"
+            class="text-room-ink-2 transition-colors hover:text-room-ink font-medium"
           >
             {link.label}
           </a>

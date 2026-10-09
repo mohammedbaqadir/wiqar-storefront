@@ -28,7 +28,7 @@ const rooms = categories
     class="inline-flex min-h-11 items-center gap-2 border border-hairline px-3.5 text-sm text-room-ink-2 transition-colors hover:border-outline hover:text-room-ink aria-current:border-outline aria-current:bg-exhibit aria-current:text-room-ink"
   >
     الكل
-    <span class="font-data text-[0.7rem] text-room-ink-3" dir="ltr">
+    <span class="font-data text-[0.75rem] text-room-ink-3" dir="ltr">
       {toArabicDigits(products.length)}
     </span>
   </a>
@@ -38,10 +38,10 @@ const rooms = categories
       <a
         href={url(`/category/${category.slug}`)}
         aria-current={current === category.slug ? 'page' : undefined}
-        class="inline-flex min-h-11 items-center gap-2 border border-hairline px-3.5 text-sm text-room-ink-2 transition-colors hover:border-outline hover:text-room-ink aria-current:border-outline aria-current:bg-exhibit aria-current:text-room-ink"
+        class="inline-flex min-h-11 items-center gap-2 border border-hairline px-3.5 text-sm font-medium text-room-ink-2 transition-colors hover:border-outline hover:text-room-ink aria-current:border-outline aria-current:bg-exhibit aria-current:text-room-ink"
       >
         {category.name}
-        <span class="font-data text-[0.7rem] text-room-ink-3" dir="ltr">
+        <span class="font-data text-[0.75rem] text-room-ink-3" dir="ltr">
           {toArabicDigits(count)}
         </span>
       </a>

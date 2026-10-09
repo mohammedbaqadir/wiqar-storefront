@@ -221,3 +221,8 @@ html[data-filtering] [data-client-filter] {
     row-gap: 3rem;
   }
 }
+
+/* Prices are set in the reading face: printed numerals, not UI digits. */
+.wq-price {
+  font-family: var(--wq-font-reading);
+}

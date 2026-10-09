@@ -37,7 +37,7 @@ const gone = isOutOfStock(product);
           {product.standard || product.description}
         </p>
         <div class="mt-2 flex flex-wrap items-center gap-x-5 gap-y-3">
-          <span class="font-data text-lg text-on-photo">{money(product.price)}</span>
+          <span class="wq-price text-xl text-on-photo">{money(product.price)}</span>
           {
             gone ? (
               <span class="font-data text-[0.7rem] text-on-photo/70">نفدت الكمية</span>
