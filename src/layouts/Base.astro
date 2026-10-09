@@ -86,9 +86,7 @@ const shareImage = image ? new URL(image, Astro.site) : undefined;
     </a>
 
     <slot />
-    <div transition:persist>
-      <CartDrawer />
-    </div>
+    <CartDrawer />
 
     <script is:inline>
       (function () {
