@@ -1,6 +1,7 @@
 ---
 import '@/styles/starwind.css';
 import '@/styles/world.css';
+import { ClientRouter } from 'astro:transitions';
 import CartDrawer from '@/components/world/CartDrawer.astro';
 import { materials, nightMaterials, themeVars } from '@/data/theme';
 import { url } from '@/lib/url';
@@ -69,6 +70,7 @@ const shareImage = image ? new URL(image, Astro.site) : undefined;
     {shareImage && <meta name="twitter:image" content={shareImage} />}
 
     <style is:inline set:html={themeCss} />
+    <ClientRouter />
     <script is:inline>
       /* Scripts are on: hide images until they have arrived, then fade them in. */
       document.documentElement.classList.add('js');

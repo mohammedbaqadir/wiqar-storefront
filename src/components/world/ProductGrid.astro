@@ -46,7 +46,7 @@ const CardHeading = title ? 'h3' : 'h2';
 
         return (
           <div
-            class="group relative flex flex-col"
+            class="group relative flex flex-col wq-reveal"
             data-product-card=""
             data-price={product.price}
             data-created={product.created_at}
@@ -67,7 +67,10 @@ const CardHeading = title ? 'h3' : 'h2';
             }
             data-name={indexed ? normalize(product.name) : undefined}
           >
-            <div class="relative aspect-square w-full overflow-hidden wq-mount">
+            <div
+              class="relative aspect-square w-full overflow-hidden wq-mount"
+              transition:name={`product-photo-${product.slug}`}
+            >
               <ProductPhoto
                 path={product.image.thumb ?? product.image.url}
                 alt={product.image.alt}
@@ -95,28 +98,9 @@ const CardHeading = title ? 'h3' : 'h2';
                 </span>
               )}
 
-              {/* Touch has no hover: a standing chevron says the card opens. */}
-              <span
-                data-touch-cue
-                aria-hidden="true"
-                class="absolute end-3 bottom-3 z-10 size-8 place-items-center bg-exhibit/90 text-ink-2"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.6"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="size-4"
-                  aria-hidden="true"
-                >
-                  <path d="M14 6l-6 6 6 6"></path>
-                </svg>
-              </span>
-
-              {/* Pointer users get quick add — but never past a choice they have to
-                  make. With options, the product page is the honest path. */}
+              {/* Pointer users get quick add on hover or keyboard focus; touch
+                  gets the same action standing, as an icon. With options, the
+                  product page is the honest path. */}
               {!gone && !needsChoosing && (
                 <button
                   type="button"
@@ -129,9 +113,22 @@ const CardHeading = title ? 'h3' : 'h2';
                   data-product-image={product.image.thumb ?? product.image.url}
                   data-product-stock={product.quantity ?? ''}
                   aria-label={`أضف ${product.name} إلى السلة`}
-                  class="absolute inset-x-3 bottom-3 z-10 min-h-11 items-center justify-center bg-ink/90 px-3 text-sm text-exhibit transition-opacity hover:bg-ink"
+                  class="absolute inset-x-3 bottom-3 z-10 min-h-11 items-center justify-center gap-2 bg-ink/90 px-3 text-sm text-exhibit transition-opacity hover:bg-ink"
                 >
-                  أضف إلى السلة
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="size-4"
+                    aria-hidden="true"
+                  >
+                    <path d="M6 8h12l-1 11H7z"></path>
+                    <path d="M9 8a3 3 0 0 1 6 0"></path>
+                  </svg>
+                  <span class="wq-quick-text">أضف إلى السلة</span>
                 </button>
               )}
 
