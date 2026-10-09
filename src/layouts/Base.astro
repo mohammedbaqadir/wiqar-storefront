@@ -2,7 +2,7 @@
 import '@/styles/starwind.css';
 import '@/styles/world.css';
 import CartDrawer from '@/components/world/CartDrawer.astro';
-import { materials, nightMaterials, themeVars } from '@/data/theme';
+import { materials, themeVars } from '@/data/theme';
 import { url } from '@/lib/url';
 
 interface Props {
@@ -20,9 +20,8 @@ const {
   type = 'website',
 } = Astro.props;
 
-/* The theme is injected from the materials data: one source of truth.
-   The night world arrives with the same shape, keyed off the document. */
-const themeCss = `:root{${themeVars(materials)}} html[data-world='night']{${themeVars(nightMaterials)}}`;
+/* The theme is injected from the materials data: one source of truth. */
+const themeCss = `:root{${themeVars(materials)}}`;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const shareImage = image ? new URL(image, Astro.site) : undefined;
@@ -33,24 +32,6 @@ const shareImage = image ? new URL(image, Astro.site) : undefined;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script is:inline>
-      /* The world is chosen before first paint: a saved choice, else the system. */
-      (function () {
-        var saved = null;
-        try {
-          saved = localStorage.getItem('wq-world');
-        } catch (error) {
-          /* private mode: fall through to the system setting */
-        }
-        var dark = window.matchMedia('(prefers-color-scheme: dark)');
-        document.documentElement.dataset.world = saved ? saved : dark.matches ? 'night' : 'day';
-        if (!saved && dark.addEventListener) {
-          dark.addEventListener('change', function (event) {
-            document.documentElement.dataset.world = event.matches ? 'night' : 'day';
-          });
-        }
-      })();
-    </script>
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
