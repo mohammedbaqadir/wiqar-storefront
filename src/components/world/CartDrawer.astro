@@ -178,7 +178,6 @@ import { url } from '@/lib/url';
   const shippingEl = drawer?.querySelector<HTMLElement>('[data-cart-shipping]');
   const progressEl = drawer?.querySelector<HTMLElement>('[data-cart-progress]');
   const announceEl = drawer?.querySelector<HTMLElement>('[data-cart-announce]');
-  const countEls = document.querySelectorAll<HTMLElement>('[data-cart-count]');
 
   if (
     drawer &&
@@ -283,7 +282,7 @@ import { url } from '@/lib/url';
       shownCount = summary.count;
       firstRender = false;
 
-      countEls.forEach((element) => {
+      document.querySelectorAll<HTMLElement>('[data-cart-count]').forEach((element) => {
         element.textContent = toArabicDigits(summary.count);
         element.hidden = summary.count === 0;
 
@@ -355,50 +354,56 @@ import { url } from '@/lib/url';
       }
     });
 
-    document.querySelectorAll<HTMLElement>('[data-cart-toggle]').forEach((button) => {
-      button.addEventListener('click', () => {
-        if (drawer.hasAttribute('data-open')) close();
-        else open();
-      });
+    /* The header button survives navigation by delegation. */
+    document.addEventListener('click', (event) => {
+      const toggle = (event.target as Element | null)?.closest?.('[data-cart-toggle]');
+      if (!toggle) return;
+      if (drawer.hasAttribute('data-open')) close();
+      else open();
     });
 
-    document.querySelectorAll<HTMLElement>('[data-add-to-cart]').forEach((button) => {
-      button.addEventListener('click', () => {
-        const data = button.dataset;
-        const buy = button.closest('[data-buy]');
-        const quantityInput = buy?.querySelector<HTMLInputElement>('input[name="quantity"]');
-        const chosen = Array.from(buy?.querySelectorAll<HTMLInputElement>('[data-option]:checked') ?? [])
-          .map((input) => ({ name: input.dataset.optionName ?? '', value: input.value }))
-          .filter((option) => option.name !== '' && option.value !== '');
-        const name = data.productName ?? '';
-        const key = lineKey(Number(data.productId), chosen.length > 0 ? chosen : undefined);
+    /* Add to cart, anywhere on the page. Delegated so client-side navigation
+       never leaves a fresh button unbound. */
+    document.addEventListener('click', (event) => {
+      const button = (event.target as Element | null)?.closest?.(
+        '[data-add-to-cart]'
+      ) as HTMLElement | null;
+      if (!button) return;
 
-        addLine(
-          {
-            id: Number(data.productId),
-            slug: data.productSlug ?? '',
-            name,
-            options: chosen.length > 0 ? chosen : undefined,
-            price: Number(data.productPrice ?? 0),
-            image: data.productImage ?? '',
-            max: data.productStock ? Number(data.productStock) : null,
-          },
-          quantityInput ? Number(quantityInput.value) || 1 : 1
-        );
+      const data = button.dataset;
+      const buy = button.closest('[data-buy]');
+      const quantityInput = buy?.querySelector<HTMLInputElement>('input[name="quantity"]');
+      const chosen = Array.from(buy?.querySelectorAll<HTMLInputElement>('[data-option]:checked') ?? [])
+        .map((input) => ({ name: input.dataset.optionName ?? '', value: input.value }))
+        .filter((option) => option.name !== '' && option.value !== '');
+      const name = data.productName ?? '';
+      const key = lineKey(Number(data.productId), chosen.length > 0 ? chosen : undefined);
 
-        if (announceEl) announceEl.textContent = `أُضيف ${name} إلى السلة.`;
-        open();
+      addLine(
+        {
+          id: Number(data.productId),
+          slug: data.productSlug ?? '',
+          name,
+          options: chosen.length > 0 ? chosen : undefined,
+          price: Number(data.productPrice ?? 0),
+          image: data.productImage ?? '',
+          max: data.productStock ? Number(data.productStock) : null,
+        },
+        quantityInput ? Number(quantityInput.value) || 1 : 1
+      );
 
-        /* Mark the line that just arrived, so the eye finds it in the drawer. */
-        if (!reduceMotion) {
-          list
-            .querySelector<HTMLElement>(`[data-line-id="${CSS.escape(key)}"]`)
-            ?.animate(
-              [{ backgroundColor: 'rgba(176, 141, 87, 0.18)' }, { backgroundColor: 'transparent' }],
-              { duration: 900, easing: 'ease-out' }
-            );
-        }
-      });
+      if (announceEl) announceEl.textContent = `أُضيف ${name} إلى السلة.`;
+      open();
+
+      /* Mark the line that just arrived, so the eye finds it in the drawer. */
+      if (!reduceMotion) {
+        list
+          .querySelector<HTMLElement>(`[data-line-id="${CSS.escape(key)}"]`)
+          ?.animate(
+            [{ backgroundColor: 'rgba(176, 141, 87, 0.18)' }, { backgroundColor: 'transparent' }],
+            { duration: 900, easing: 'ease-out' }
+          );
+      }
     });
 
     subscribe(render);

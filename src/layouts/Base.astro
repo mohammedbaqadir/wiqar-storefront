@@ -86,7 +86,7 @@ const shareImage = image ? new URL(image, Astro.site) : undefined;
     </a>
 
     <slot />
-    <CartDrawer />
+    <CartDrawer transition:persist />
 
     <script is:inline>
       (function () {
@@ -102,11 +102,16 @@ const shareImage = image ? new URL(image, Astro.site) : undefined;
           true
         );
 
-        /* Only the images already in the markup are held back while they load. */
-        document.querySelectorAll('img').forEach(function (image) {
-          if (image.complete) reveal(image);
-          else image.classList.add('wq-loading');
-        });
+        /* Hold each page's images until they arrive — again after a swap. */
+        var hold = function () {
+          document.querySelectorAll('img').forEach(function (image) {
+            if (image.complete) reveal(image);
+            else image.classList.add('wq-loading');
+          });
+        };
+
+        hold();
+        document.addEventListener('astro:page-load', hold);
       })();
     </script>
   </body>
