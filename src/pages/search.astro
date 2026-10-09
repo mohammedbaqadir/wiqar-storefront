@@ -170,7 +170,7 @@ const products = await getProducts();
           name.textContent = entry.card.querySelector('h3')?.textContent?.trim() ?? '';
 
           const price = document.createElement('span');
-          price.className = 'font-data text-xs text-ink-3';
+          price.className = 'wq-price text-[0.95rem] text-ink-3';
           price.textContent = money(Number(entry.card.dataset.price ?? 0));
 
           link.append(name, price);

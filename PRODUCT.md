@@ -45,6 +45,9 @@ carries it.
 - Static Astro site on Cloudflare Workers (46 pages). The catalogue lives in Cloudflare D1 and
   is served to the build by the store's own Worker; pages read it through one module,
   `src/lib/api.ts`, so the source can move again without touching a page.
+- Two worlds, one shop: the light greige room by day and the olive night gallery, chosen by
+  the visitor's system preference and switchable with the lamp in the footer. At night each
+  photograph sits in its own pool of light; by day it rests on a lit plinth.
 - Cart, search, sorting, options and the gallery run client-side as plain TypeScript — no UI
   framework; the entire client bundle is ~12 KB.
 - Photographs are placeholder JPEGs from royalty-free stock, stored with each product
@@ -63,9 +66,9 @@ carries it.
 - The name وقار and the Latin wordmark WIỌAR.
 - The owner's standard, in the store's own voice: الجودة · الذوق · القيمة.
 - Arabic-first voice: plain, precise, never salesy.
-- **Not binding:** the visual world may evolve. The current one — one warm greige ground (#edeae3),
-  champagne in small doses, single light mode, Naseeb / Amiri / Plex — is the incumbent to
-  preserve until a deliberate replacement is chosen.
+- **Not binding:** the visual world may evolve. The current one — a warm greige room by day
+  (#edeae3), an olive gallery by night (#1a1e1b), champagne in small doses, Naseeb / Amiri /
+  Plex — is the incumbent to preserve until a deliberate replacement is chosen.
 
 ## Evidence on Hand
 

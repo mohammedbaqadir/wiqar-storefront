@@ -4,7 +4,7 @@ import { url } from '@/lib/url';
 
 const year = toArabicDigits(new Date().getFullYear());
 const linkClass =
-  'transition-colors hover:text-deep-ink hover:underline hover:decoration-accent hover:decoration-2 hover:underline-offset-4';
+  'font-medium transition-colors hover:text-deep-ink';
 ---
 
 <footer class="mt-20 bg-deep text-deep-ink">
@@ -57,9 +57,59 @@ const linkClass =
   </div>
 
   <div
-    class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-5 py-5 text-center text-[0.72rem] tracking-[0.04em] text-deep-ink-2 sm:flex-row lg:px-8"
+    class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 py-5 text-center text-[0.72rem] tracking-[0.04em] text-deep-ink-2 sm:flex-row lg:px-8"
   >
     <span>الأسعار تشمل ضريبة القيمة المضافة · الشحن يُحسب عند الدفع</span>
-    <span dir="ltr">© {year} WIỌAR</span>
+    <div class="flex items-center gap-4">
+      <button
+        type="button"
+        data-world-toggle
+        aria-pressed="false"
+        aria-label="تبديل الإضاءة بين النهار والليل"
+        class="inline-flex min-h-11 items-center gap-2 border border-deep-ink/20 px-3 text-[0.72rem] text-deep-ink-2 transition-colors hover:border-accent hover:text-deep-ink"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="size-4"
+          aria-hidden="true"
+        >
+          <path d="M9 18h6M10 21h4"></path>
+          <path d="M12 3a6 6 0 0 1 6 6c0 2.4-1.4 3.9-2.4 5.4-.6.9-.6 1.7-.6 2.6H9c0-.9 0-1.7-.6-2.6C7.4 12.9 6 11.4 6 9a6 6 0 0 1 6-6z"></path>
+        </svg>
+        <span data-world-label>الليل</span>
+      </button>
+      <span dir="ltr">© {year} WIỌAR</span>
+    </div>
   </div>
 </footer>
+
+<script is:inline>
+  (function () {
+    var button = document.querySelector('[data-world-toggle]');
+    if (!button) return;
+
+    var label = button.querySelector('[data-world-label]');
+    var paint = function () {
+      var night = document.documentElement.dataset.world === 'night';
+      if (label) label.textContent = night ? 'النهار' : 'الليل';
+      button.setAttribute('aria-pressed', String(night));
+    };
+
+    paint();
+    button.addEventListener('click', function () {
+      var next = document.documentElement.dataset.world === 'night' ? 'day' : 'night';
+      document.documentElement.dataset.world = next;
+      try {
+        localStorage.setItem('wq-world', next);
+      } catch (error) {
+        /* private mode: the choice simply does not persist */
+      }
+      paint();
+    });
+  })();
+</script>

@@ -208,3 +208,43 @@ html[data-filtering] [data-client-filter] {
     transition: none;
   }
 }
+
+/* ── the two worlds ───────────────────────────────────────────
+   The day is the lit greige room, kept exactly as it was; the
+   night is an unlit olive gallery where light belongs to the
+   pieces. Only the night rules below deviate. */
+html[data-world='night'] {
+  color-scheme: dark;
+}
+
+html[data-world='night'] body {
+  background-image: none;
+}
+
+html[data-world='night'] body::after {
+  opacity: 0.03;
+}
+
+/* Photo mounts: a lit plinth by day, a pool of light at night. */
+.wq-mount {
+  background-color: var(--wq-exhibit-2);
+}
+
+html[data-world='night'] .wq-mount {
+  background-color: transparent;
+  background-image: radial-gradient(85% 62% at 50% 92%, rgba(242, 239, 230, 0.22), transparent 74%);
+  padding: 0.9rem 0.9rem 1.7rem;
+}
+
+/* The night grid breathes: three across on wide screens, roomier rows. */
+@media (min-width: 1024px) {
+  html[data-world='night'] .wq-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 3rem;
+  }
+}
+
+/* Prices are set in the reading face: printed numerals, not UI digits. */
+.wq-price {
+  font-family: var(--wq-font-reading);
+}

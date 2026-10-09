@@ -2,20 +2,21 @@
  * Materials — the store's theme, kept as data so the whole shop repaints from
  * one source of truth.
  *
- * The ground is a warm greige (never pure white), the ink near-black, and the
- * accent shows up in small doses only. That is how the shops this one belongs
- * beside are built: Hardgraft's greige ground, Huckberry's near-black type on
- * flat borderless product cards. There is no dark mode — photography owns the
- * screen, and a shop has one setting.
+ * Two worlds, one shop. Day is the warm greige room — the original, kept as it
+ * was. Night is a cool olive gallery (chosen in the lighting tests) where each
+ * photograph sits in its own pool of light. Visitors get the world their
+ * system prefers and can switch with the lamp in the footer.
  *
  * Roles:
  *   room*     — the ground: page, quiet strips, the service bar
- *   exhibit*  — product surfaces: photo mounts and panels, a step lighter than the room
+ *   exhibit*  — product surfaces: photo mounts and panels
  *   ink*      — ink on exhibits
  *   roomInk*  — ink on the room
  *   deep*     — the footer band
  *   accent*   — the store's one colour, used sparingly (rules, active marks)
  *   signal    — the one red: a fact past its limit (last units)
+ *   scrim     — the always-dark veil over photographs (hero, cart overlay)
+ *   onPhoto   — light ink that sits on photographs, whatever the world
  */
 
 export interface Materials {
@@ -39,8 +40,11 @@ export interface Materials {
   signal: string;
   hairline: string;
   hairlineInk: string;
+  scrim: string;
+  onPhoto: string;
 }
 
+/** Day — the greige room, unchanged. */
 export const materials: Materials = {
   room: '#edeae3',
   room2: '#e4e0d6',
@@ -62,6 +66,34 @@ export const materials: Materials = {
   signal: '#9c3221',
   hairline: 'rgba(17, 17, 16, 0.14)',
   hairlineInk: 'rgba(17, 17, 16, 0.14)',
+  scrim: '#111110',
+  onPhoto: '#f7f5ef',
+};
+
+/** Night — the olive gallery, tuned in the lighting tests (#1a1e1b). */
+export const nightMaterials: Materials = {
+  room: '#1a1e1b',
+  room2: '#161a17',
+  room3: '#3a403a',
+  exhibit: '#20241f',
+  exhibit2: '#1f231e',
+  ink: '#f2efe6',
+  ink2: '#c7c2b4',
+  ink3: '#a6a194',
+  roomInk: '#f2efe6',
+  roomInk2: '#c7c2b4',
+  roomInk3: '#a6a194',
+  deep: '#121512',
+  deepInk: '#f2efe6',
+  deepInk2: '#c0bbae',
+  accent: '#b08d57',
+  accentD: '#c9a97a',
+  accentL: '#dcc39a',
+  signal: '#d0664d',
+  hairline: 'rgba(242, 239, 230, 0.16)',
+  hairlineInk: 'rgba(242, 239, 230, 0.2)',
+  scrim: '#0c0e0c',
+  onPhoto: '#f7f5ef',
 };
 
 /** Serialises the materials into the CSS custom properties the app reads. */
@@ -87,4 +119,6 @@ export const themeVars = (m: Materials): string =>
     `--wq-signal:${m.signal}`,
     `--wq-hairline:${m.hairline}`,
     `--wq-hairline-ink:${m.hairlineInk}`,
+    `--wq-scrim:${m.scrim}`,
+    `--wq-on-photo:${m.onPhoto}`,
   ].join(';');

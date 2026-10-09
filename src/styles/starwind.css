@@ -34,6 +34,9 @@
   /* rules */
   --color-hairline: var(--wq-hairline);
   --color-hairline-ink: var(--wq-hairline-ink);
+  /* the veil over photographs, and ink that sits on them */
+  --color-scrim: var(--wq-scrim);
+  --color-on-photo: var(--wq-on-photo);
 
   --font-display: var(--wq-font-display);
   --font-reading: var(--wq-font-reading);
