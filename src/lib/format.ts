@@ -4,3 +4,7 @@ export const toArabicDigits = (input: number | string): string =>
 
 export const money = (amount: number): string =>
   `${toArabicDigits(amount.toLocaleString('en-US'))} ر.س`;
+
+/** The one red flag: a single piece is not "١ قطع". */
+export const stockLabel = (count: number): string =>
+  count === 1 ? 'آخر قطعة' : `آخر ${toArabicDigits(count)} قطع`;

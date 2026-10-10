@@ -1,4 +1,4 @@
-import { toArabicDigits } from '@/lib/format';
+import { stockLabel } from '@/lib/format';
 
 /**
  * The store's data seam. Every page reads the shop through this file and
@@ -15,9 +15,18 @@ export interface ApiImage {
 }
 
 /** A choice the shopper makes: a size, a colour, a measure. */
+export interface ApiProductOptionValue {
+  label: string;
+  swatch?: string;
+  /** Units left of this exact choice; absent when the catalogue doesn't track it. */
+  stock?: number;
+  /** This choice's own price; absent when it sells at the piece's price. */
+  price?: number;
+}
+
 export interface ApiProductOption {
   name: string;
-  values: Array<{ label: string; swatch?: string }>;
+  values: ApiProductOptionValue[];
 }
 
 export interface ApiCategory {
@@ -142,4 +151,4 @@ export const isLowStock = (product: ApiProduct): boolean =>
 
 /** What the red flag says: a single piece is not "1 قطع". */
 export const lowStockLabel = (product: ApiProduct): string =>
-  product.quantity === 1 ? 'آخر قطعة' : `آخر ${toArabicDigits(product.quantity ?? 0)} قطع`;
+  stockLabel(product.quantity ?? 0);

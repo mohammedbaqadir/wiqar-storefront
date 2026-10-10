@@ -4,18 +4,16 @@ import SiteHeader from '@/components/world/SiteHeader.astro';
 import SiteFooter from '@/components/world/SiteFooter.astro';
 import ProductGrid from '@/components/world/ProductGrid.astro';
 import ProductPhoto from '@/components/world/ProductPhoto.astro';
-import Button from '@/components/starwind/button/Button.astro';
+import BuyBox from '@/components/world/BuyBox.svelte';
 import {
   getCategory,
   getProduct,
   getProducts,
   getRelated,
   isLowStock,
-  isOnSale,
   isOutOfStock,
   lowStockLabel,
 } from '@/lib/api';
-import { money } from '@/lib/format';
 import { productSchema } from '@/lib/schema';
 import { url } from '@/lib/url';
 
@@ -33,7 +31,6 @@ const gallery = product.images.length > 0 ? product.images : [product.image];
 const showThumbs = gallery.length > 1;
 
 const gone = isOutOfStock(product);
-const thumbnail = product.image.thumb ?? product.image.url;
 
 /** Each thumbnail swaps the stage to the catalogue URL. */
 const stageUrls = gallery.map((image) => image.url);
@@ -161,96 +158,9 @@ const schema = productSchema(product, {
           >
             {product.name}
           </h1>
-
-          <p class="font-reading text-lg leading-loose text-room-ink-2">{product.description}</p>
         </div>
 
-        <div class="flex items-end gap-4">
-          {
-            isOnSale(product) ? (
-              <>
-                <span class="wq-price text-3xl text-room-ink">
-                  {money(product.sale_price ?? product.price)}
-                </span>
-                <span class="wq-price text-base text-room-ink-3 line-through">
-                  {money(product.regular_price)}
-                </span>
-              </>
-            ) : (
-              <span class="wq-price text-3xl text-room-ink">{money(product.price)}</span>
-            )
-          }
-        </div>
-
-        <div data-buy class="space-y-5 wq-in wq-d2">
-          {
-            product.options.map((option, optionIndex) => (
-              <fieldset class="space-y-2">
-                <legend class="font-data text-[0.7rem] tracking-[0.12em] text-room-ink-3">
-                  {option.name}
-                </legend>
-                <div class="flex flex-wrap gap-2">
-                  {option.values.map((value, valueIndex) => (
-                    <label class="cursor-pointer">
-                      <input
-                        type="radio"
-                        name={`option-${optionIndex}`}
-                        value={value.label}
-                        checked={valueIndex === 0}
-                        data-option
-                        data-option-name={option.name}
-                        class="peer sr-only"
-                      />
-                      <span class="inline-flex min-h-11 items-center gap-2 border border-hairline px-3 text-sm text-room-ink-2 transition-colors peer-checked:border-outline peer-checked:text-room-ink peer-focus-visible:ring-2 peer-focus-visible:ring-outline/40">
-                        {value.swatch && (
-                          <span
-                            aria-hidden="true"
-                            class="size-3.5 rounded-full border border-hairline"
-                            style={`background:${value.swatch}`}
-                          />
-                        )}
-                        {value.label}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
-            ))
-          }
-
-          {
-            gone ? (
-              <Button type="button" disabled>
-                نفدت الكمية
-              </Button>
-            ) : (
-              <div class="flex flex-wrap items-center gap-4">
-                <label class="flex min-h-11 items-center gap-3 border border-hairline bg-exhibit px-3 focus-within:border-outline focus-within:ring-2 focus-within:ring-outline/40">
-                  <span class="text-sm text-room-ink-2">الكمية</span>
-                  <input
-                    type="number"
-                    name="quantity"
-                    value="1"
-                    min="1"
-                    class="wq-field-bare w-14 p-0 text-center font-data text-sm text-ink"
-                  />
-                </label>
-                <Button
-                  type="button"
-                  data-add-to-cart
-                  data-product-id={product.id}
-                  data-product-slug={product.slug}
-                  data-product-name={product.name}
-                  data-product-price={product.price}
-                  data-product-image={thumbnail}
-                  data-product-stock={product.quantity ?? ''}
-                >
-                  أضف إلى السلة
-                </Button>
-              </div>
-            )
-          }
-        </div>
+        <BuyBox client:load product={product} />
 
         <p class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.8rem] text-room-ink-3">
           <a href={url('/service#shipping')} class="transition-colors hover:text-room-ink">توصيل مجاني فوق ٥٠٠ ر.س</a>
@@ -280,6 +190,13 @@ const schema = productSchema(product, {
             </dd>
           </div>
         </dl>
+
+        <section class="space-y-3 border-t border-hairline pt-6">
+          <h2 class="font-data text-[0.7rem] tracking-[0.12em] text-room-ink-3">الوصف</h2>
+          <p class="max-w-prose font-reading text-lg leading-loose text-room-ink-2">
+            {product.description}
+          </p>
+        </section>
       </div>
     </div>
 
