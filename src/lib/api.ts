@@ -45,6 +45,9 @@ export interface ApiProduct {
   price: number;
   regular_price: number;
   sale_price: number | null;
+  /** The sale window, ISO dates; present only while the sale is running. */
+  sale_starts_at: string | null;
+  sale_ends_at: string | null;
   quantity: number | null;
   status: string;
   is_out_of_stock: boolean;

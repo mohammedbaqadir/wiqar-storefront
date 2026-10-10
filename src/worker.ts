@@ -30,6 +30,12 @@ const STORE = {
 const num = (value: unknown, fallback = 0): number =>
   typeof value === "number" ? value : Number(value ?? fallback) || fallback;
 
+/** An ISO date the store can count down to; anything unparseable is absent. */
+const isoOrNull = (value: unknown): string | null => {
+  const raw = String(value ?? "").trim();
+  return raw !== "" && !Number.isNaN(Date.parse(raw)) ? raw : null;
+};
+
 const list = (value: unknown): unknown[] => {
   if (typeof value !== "string" || value.trim() === "") return [];
   try {
@@ -59,7 +65,13 @@ function toProduct(row: Row, categoryId: Map<string, number>, origin: string) {
   const price = num(row.price);
   const compareAt =
     row.compare_at_price === null || row.compare_at_price === undefined ? null : num(row.compare_at_price);
-  const onSale = compareAt !== null && compareAt > price;
+  const startsAt = isoOrNull(row.sale_starts_at);
+  const endsAt = isoOrNull(row.sale_ends_at);
+  const now = Date.now();
+  const windowOpen =
+    (startsAt === null || now >= Date.parse(startsAt)) &&
+    (endsAt === null || now <= Date.parse(endsAt));
+  const onSale = compareAt !== null && compareAt > price && windowOpen;
   const quantity = row.quantity === null || row.quantity === undefined ? null : num(row.quantity);
   const images = list(row.images)
     .map((entry) => toImage((entry as Row).url, (entry as Row).alt, origin))
@@ -76,6 +88,8 @@ function toProduct(row: Row, categoryId: Map<string, number>, origin: string) {
     price,
     regular_price: onSale ? compareAt : price,
     sale_price: onSale ? price : null,
+    sale_starts_at: onSale ? startsAt : null,
+    sale_ends_at: onSale ? endsAt : null,
     quantity,
     status: String(row.status ?? ""),
     is_out_of_stock: quantity !== null && quantity <= 0,

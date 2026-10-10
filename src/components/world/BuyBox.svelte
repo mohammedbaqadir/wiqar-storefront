@@ -1,6 +1,7 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import type { ApiProduct } from '@/lib/api';
-  import { money, stockLabel } from '@/lib/format';
+  import { money, stockLabel, toArabicDigits } from '@/lib/format';
 
   interface Props {
     product: ApiProduct;
@@ -32,12 +33,62 @@
       product.sale_price !== null &&
       product.sale_price < product.regular_price
   );
-  const shownPrice = $derived(
-    onSale ? (product.sale_price ?? product.price) : (variantPrice ?? product.price)
-  );
   const lowStockLabel = $derived(
     variantStock !== null && variantStock > 0 && variantStock <= 3 ? stockLabel(variantStock) : null
   );
+
+  /* The countdown renders only after mount: the server has no clock to trust. */
+  let mounted = $state(false);
+  let now = $state(Date.now());
+
+  onMount(() => {
+    mounted = true;
+    const timer = setInterval(() => (now = Date.now()), 1000);
+    return () => clearInterval(timer);
+  });
+
+  const dayPhrase = (count: number): string =>
+    count === 1
+      ? 'يوم'
+      : count === 2
+        ? 'يومين'
+        : count <= 10
+          ? `${toArabicDigits(count)} أيام`
+          : `${toArabicDigits(count)} يومًا`;
+  const hourPhrase = (count: number): string =>
+    count === 1
+      ? 'ساعة'
+      : count === 2
+        ? 'ساعتين'
+        : count <= 10
+          ? `${toArabicDigits(count)} ساعات`
+          : `${toArabicDigits(count)} ساعةً`;
+
+  const saleEnd = $derived(product.sale_ends_at ? Date.parse(product.sale_ends_at) : null);
+  const expired = $derived(saleEnd !== null && now > saleEnd);
+  const saleLive = $derived(onSale && !expired);
+  const payPrice = $derived(
+    saleLive
+      ? (product.sale_price ?? product.price)
+      : (variantPrice ?? (expired ? product.regular_price : product.price))
+  );
+
+  const countdown = $derived.by(() => {
+    if (!saleLive || saleEnd === null) return null;
+    const left = saleEnd - now;
+    if (left <= 0) return null;
+    const days = Math.floor(left / 86_400_000);
+    const hours = Math.floor((left % 86_400_000) / 3_600_000);
+    if (days >= 1) {
+      const parts = [dayPhrase(days)];
+      if (hours > 0) parts.push(hourPhrase(hours));
+      return `ينتهي العرض خلال ${parts.join(' و')}`;
+    }
+    const minutes = Math.floor((left % 3_600_000) / 60_000);
+    const seconds = Math.floor((left % 60_000) / 1000);
+    const pad = (value: number) => toArabicDigits(String(value).padStart(2, '0'));
+    return `ينتهي العرض خلال ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+  });
 
   /* Same classes the starwind Button renders, so the island does not drift. */
   const buttonClass =
@@ -45,6 +96,20 @@
 </script>
 
 <div data-buy class="space-y-5 wq-in wq-d2">
+  <div class="space-y-2">
+    <div class="flex items-end gap-4">
+      <span class="wq-price text-3xl text-room-ink">{money(payPrice)}</span>
+      {#if saleLive}
+        <span class="wq-price text-base text-room-ink-3 line-through">
+          {money(product.regular_price)}
+        </span>
+      {/if}
+    </div>
+    {#if mounted && countdown}
+      <p class="font-data text-[0.8rem] text-room-ink-3">{countdown}</p>
+    {/if}
+  </div>
+
   {#each product.options as option, optionIndex (optionIndex)}
     <fieldset class="space-y-2">
       <legend class="font-data text-[0.7rem] tracking-[0.12em] text-room-ink-3">
@@ -81,15 +146,6 @@
     </fieldset>
   {/each}
 
-  <div class="flex items-end gap-4">
-    <span class="wq-price text-3xl text-room-ink">{money(shownPrice)}</span>
-    {#if onSale}
-      <span class="wq-price text-base text-room-ink-3 line-through">
-        {money(product.regular_price)}
-      </span>
-    {/if}
-  </div>
-
   {#if gone}
     <button type="button" disabled class={buttonClass}>نفدت الكمية</button>
   {:else if variantStock === 0}
@@ -114,7 +170,7 @@
         data-product-id={product.id}
         data-product-slug={product.slug}
         data-product-name={product.name}
-        data-product-price={variantPrice ?? product.price}
+        data-product-price={payPrice}
         data-product-image={product.image.thumb ?? product.image.url}
         data-product-stock={variantStock ?? product.quantity ?? ''}
         class={buttonClass}
