@@ -263,13 +263,29 @@ html[data-world='night'] .wq-mount {
 }
 
 /* ── motion ───────────────────────────────────────────────────
-   Quiet, few, and each one has a reduced-motion answer. Pages
-   cross-fade, the pieces morph between grid and page, and content
-   rises once as it enters the viewport — no JavaScript needed. */
+   The choreography: pages cross-fade with the main column rising,
+   pieces morph between grid and page, heroes and product stages
+   settle on arrival, and content rises once as it enters the
+   viewport. Every move has a reduced-motion answer: with "reduce"
+   set, the store is completely still. */
+
+/* the moving column */
+main#main {
+  view-transition-name: main;
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 240ms;
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+::view-transition-old(main) {
+  animation: 160ms ease both wq-sink;
+}
+
+::view-transition-new(main) {
+  animation: 380ms cubic-bezier(0.16, 1, 0.3, 1) both wq-page;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -277,12 +293,66 @@ html[data-world='night'] .wq-mount {
     .wq-reveal {
       animation: wq-rise linear both;
       animation-timeline: view();
-      animation-range: entry 0% entry 55%;
+      animation-range: entry 0% entry 60%;
     }
+  }
+
+  /* arrival: stages settle into place, copy steps in behind */
+  .wq-in {
+    animation: wq-in 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .wq-in-photo {
+    animation: wq-photo 1200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .wq-d1 { animation-delay: 90ms; }
+  .wq-d2 { animation-delay: 180ms; }
+  .wq-d3 { animation-delay: 270ms; }
+  .wq-d4 { animation-delay: 360ms; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-old(main),
+  ::view-transition-new(main) {
+    animation: none;
   }
 }
 
 @keyframes wq-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes wq-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes wq-photo {
+  from {
+    transform: scale(1.04);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes wq-page {
   from {
     opacity: 0;
     transform: translateY(14px);
@@ -290,5 +360,12 @@ html[data-world='night'] .wq-mount {
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+@keyframes wq-sink {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
   }
 }

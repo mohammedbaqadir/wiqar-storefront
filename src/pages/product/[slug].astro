@@ -96,6 +96,7 @@ const schema = productSchema(product, {
             priority
             data-gallery-main
             class:list={[
+              'wq-in-photo',
               'size-full object-cover transition-opacity duration-300 ease-out motion-reduce:transition-none',
               gone && 'opacity-55',
             ]}
@@ -145,7 +146,7 @@ const schema = productSchema(product, {
         }
       </div>
 
-      <div class="space-y-7">
+      <div class="space-y-7 wq-in">
         <div class="space-y-4 border-b border-hairline pb-6">
           <div class="flex flex-wrap items-center gap-3 font-data text-[0.8rem] text-room-ink-3">
             <span dir="ltr">{product.sku}</span>
@@ -181,7 +182,7 @@ const schema = productSchema(product, {
           }
         </div>
 
-        <div data-buy class="space-y-5">
+        <div data-buy class="space-y-5 wq-in wq-d2">
           {
             product.options.map((option, optionIndex) => (
               <fieldset class="space-y-2">
