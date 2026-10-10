@@ -67,40 +67,45 @@ const CardHeading = title ? 'h3' : 'h2';
             }
             data-name={indexed ? normalize(product.name) : undefined}
           >
-            <div
-              class="relative aspect-square w-full overflow-hidden wq-mount"
-              transition:name={`product-photo-${product.slug}`}
-            >
-              <ProductPhoto
-                path={product.image.thumb ?? product.image.url}
-                alt={product.image.alt}
-                class:list={[
-                  'size-full object-cover transition-[transform,opacity] duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none group-hover:scale-[1.05]',
-                  gone && 'opacity-55',
-                ]}
-              />
+            <div class="relative">
+              <div
+                class="relative aspect-square w-full overflow-hidden wq-mount"
+                transition:name={`product-photo-${product.slug}`}
+              >
+                <ProductPhoto
+                  path={product.image.thumb ?? product.image.url}
+                  alt={product.image.alt}
+                  class:list={[
+                    'size-full object-cover transition-[transform,opacity] duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none group-hover:scale-[1.05]',
+                    gone && 'opacity-55',
+                  ]}
+                />
 
-              {gone && (
-                <span class="absolute start-3 top-3 bg-ink px-2 py-0.5 font-data text-[0.7rem] text-exhibit">
-                  نفدت
-                </span>
-              )}
+                {gone && (
+                  <span class="absolute start-3 top-3 bg-ink px-2 py-0.5 font-data text-[0.7rem] text-exhibit">
+                    نفدت
+                  </span>
+                )}
 
-              {isLowStock(product) && (
-                <span class="absolute start-3 top-3 bg-signal px-2 py-0.5 font-data text-[0.7rem] text-exhibit">
-                  {lowStockLabel(product)}
-                </span>
-              )}
+                {isLowStock(product) && (
+                  <span class="absolute start-3 top-3 bg-signal px-2 py-0.5 font-data text-[0.7rem] text-exhibit">
+                    {lowStockLabel(product)}
+                  </span>
+                )}
 
-              {isOnSale(product) && (
-                <span class="absolute end-3 top-3 bg-ink px-2 py-0.5 text-[0.7rem] text-exhibit">
-                  عرض
-                </span>
-              )}
+                {isOnSale(product) && (
+                  <span class="absolute end-3 top-3 bg-ink px-2 py-0.5 text-[0.7rem] text-exhibit">
+                    عرض
+                  </span>
+                )}
+              </div>
 
               {/* Pointer users get quick add on hover or keyboard focus; touch
                   gets the same action standing, as an icon. With options, the
-                  product page is the honest path. */}
+                  product page is the honest path. The controls sit outside the
+                  named mount: a view-transition-name paints its element as a
+                  stacking context, which would trap z-index under the card's
+                  overlay link. */}
               {!gone && !needsChoosing && (
                 <button
                   type="button"
