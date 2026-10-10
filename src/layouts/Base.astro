@@ -2,7 +2,7 @@
 import '@/styles/starwind.css';
 import '@/styles/world.css';
 import { ClientRouter } from 'astro:transitions';
-import CartDrawer from '@/components/world/CartDrawer.astro';
+import CartWidget from '@/components/world/CartWidget.svelte';
 import { materials, nightMaterials, themeVars } from '@/data/theme';
 import { url } from '@/lib/url';
 
@@ -86,7 +86,7 @@ const shareImage = image ? new URL(image, Astro.site) : undefined;
     </a>
 
     <slot />
-    <CartDrawer />
+    <CartWidget client:load />
 
     <script is:inline>
       (function () {

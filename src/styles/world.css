@@ -369,3 +369,23 @@ main#main {
     transform: translateY(-8px);
   }
 }
+
+/* a line that just arrived in the drawer */
+@keyframes wq-line-in {
+  from {
+    background-color: rgba(176, 141, 87, 0.18);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+.wq-line-in {
+  animation: wq-line-in 900ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wq-line-in {
+    animation: none;
+  }
+}

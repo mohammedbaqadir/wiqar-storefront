@@ -1,4 +1,5 @@
 ---
+import CartButton from './CartButton.svelte';
 import { url } from '@/lib/url';
 
 const links = [{ href: url('/catalog'), label: 'المقتنيات' }];
@@ -89,27 +90,7 @@ const links = [{ href: url('/catalog'), label: 'المقتنيات' }];
         </svg>
       </a>
 
-      <button
-        type="button"
-        data-cart-toggle
-        class="inline-flex min-h-11 min-w-11 items-center justify-center gap-2 text-room-ink transition-colors hover:text-accent-d"
-        aria-label="السلة"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="size-4.5"
-          aria-hidden="true"
-        >
-          <path d="M6 8h12l-1 11H7z"></path>
-          <path d="M9 8a3 3 0 0 1 6 0"></path>
-        </svg>
-        <span data-cart-count class="font-data text-[0.7rem] leading-none" hidden></span>
-      </button>
+      <CartButton client:load />
     </nav>
   </div>
 </header>
