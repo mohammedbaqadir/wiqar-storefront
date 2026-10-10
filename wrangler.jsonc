@@ -2,6 +2,9 @@
   "name": "wiqar-storefront",
   "main": "src/worker.ts",
   "compatibility_date": "2026-10-08",
+  "triggers": {
+    "crons": ["*/10 * * * *"]
+  },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
@@ -12,7 +15,8 @@
     {
       "binding": "CATALOG_DB",
       "database_name": "wiqar-products",
-      "database_id": "e65668a9-7132-47b1-8e68-3f818d47cca4"
+      "database_id": "e65668a9-7132-47b1-8e68-3f818d47cca4",
+      "migrations_dir": "migrations"
     }
   ]
 }

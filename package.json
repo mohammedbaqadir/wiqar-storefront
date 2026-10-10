@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "deploy": "bun run build && wrangler deploy",
-    "astro": "astro"
+    "astro": "astro",
+    "sale": "bun tools/sale.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

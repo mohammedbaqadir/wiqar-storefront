@@ -1,4 +1,5 @@
 import { stockLabel } from '@/lib/format';
+import { catalogProblems } from '@/lib/validate';
 
 /**
  * The store's data seam. Every page reads the shop through this file and
@@ -74,7 +75,7 @@ export interface ApiStore {
   domain: string;
 }
 
-interface ApiCatalog {
+export interface ApiCatalog {
   store: ApiStore;
   categories: ApiCategory[];
   products: ApiProduct[];
@@ -91,11 +92,18 @@ let pending: Promise<ApiCatalog> | null = null;
  */
 const load = (): Promise<ApiCatalog> => {
   if (!pending) {
-    pending = fetch(CATALOG_URL).then((response) => {
+    pending = fetch(CATALOG_URL).then(async (response) => {
       if (!response.ok) {
         throw new Error(`catalogue fetch failed: ${response.status} ${response.statusText} — ${CATALOG_URL}`);
       }
-      return response.json() as Promise<ApiCatalog>;
+      const catalog = (await response.json()) as ApiCatalog;
+      const problems = catalogProblems(catalog);
+      if (problems.length > 0) {
+        const shown = problems.slice(0, 12).map((problem) => `- ${problem}`).join('\n');
+        const rest = problems.length > 12 ? `\n…and ${problems.length - 12} more` : '';
+        throw new Error(`catalogue rejected — fix these rows in D1:\n${shown}${rest}`);
+      }
+      return catalog;
     });
   }
   return pending;

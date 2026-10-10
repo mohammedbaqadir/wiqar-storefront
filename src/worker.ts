@@ -15,6 +15,8 @@ interface D1PreparedStatement {
 interface Env {
   ASSETS: { fetch(request: Request): Promise<Response> };
   CATALOG_DB: { prepare(query: string): D1PreparedStatement };
+  /** Where the cron pings when a sale window opens or closes. */
+  DEPLOY_HOOK_URL?: string;
 }
 
 type Row = Record<string, unknown>;
@@ -111,6 +113,23 @@ function toProduct(row: Row, categoryId: Map<string, number>, origin: string) {
   };
 }
 
+/** The cron window. Keep equal to the trigger interval in wrangler.jsonc. */
+const EDGE_LOOKBACK_MS = 10 * 60_000;
+
+/** SKUs whose sale window crossed a boundary inside (since, now]. */
+async function saleEdges(env: Env, since: number, now: number): Promise<string[]> {
+  const rows = await env.CATALOG_DB.prepare(
+    "SELECT sku, sale_starts_at, sale_ends_at FROM products WHERE sale_price IS NOT NULL"
+  ).all<Row>();
+  const crossed = (value: unknown): boolean => {
+    const at = value ? Date.parse(String(value)) : NaN;
+    return !Number.isNaN(at) && at > since && at <= now;
+  };
+  return rows.results
+    .filter((row) => crossed(row.sale_starts_at) || crossed(row.sale_ends_at))
+    .map((row) => String(row.sku));
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
@@ -133,5 +152,32 @@ export default {
       categories: rooms,
       products: products.results.map((row) => toProduct(row, byName, url.origin)),
     });
+  },
+
+  /* Every ten minutes: did a sale window open or close since the last tick?
+     The static build is stale from that moment — ask for a new one. */
+  async scheduled(
+    _controller: unknown,
+    env: Env,
+    ctx: { waitUntil(promise: Promise<unknown>): void }
+  ): Promise<void> {
+    const now = Date.now();
+    const edges = await saleEdges(env, now - EDGE_LOOKBACK_MS, now);
+    if (edges.length === 0) return;
+    ctx.waitUntil(
+      (async () => {
+        const label = `sale edge (${edges.join(", ")})`;
+        if (!env.DEPLOY_HOOK_URL) {
+          console.log(`${label} — no deploy hook configured`);
+          return;
+        }
+        try {
+          const response = await fetch(env.DEPLOY_HOOK_URL, { method: "POST" });
+          console.log(`${label} — rebuild pinged: ${response.status}`);
+        } catch (error) {
+          console.log(`${label} — ping failed: ${String(error)}`);
+        }
+      })()
+    );
   },
 };
