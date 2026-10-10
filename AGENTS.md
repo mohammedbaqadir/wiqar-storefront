@@ -8,6 +8,11 @@ astro dev --background
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
+## Data
+
+The catalogue lives in Cloudflare D1 only; run sales with `bun run sale`, treat `migrations/`
+as the schema source, and follow `DATA.md` for the full operations guide.
+
 ## Documentation
 
 Full documentation: https://docs.astro.build

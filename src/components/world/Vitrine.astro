@@ -1,7 +1,7 @@
 ---
 import Button from '@/components/starwind/button/Button.astro';
 import ProductPhoto from './ProductPhoto.astro';
-import { isLowStock, isOutOfStock, lowStockLabel, type ApiProduct } from '@/lib/api';
+import { isLowStock, isOnSale, isOutOfStock, lowStockLabel, type ApiProduct } from '@/lib/api';
 import { money } from '@/lib/format';
 import { url } from '@/lib/url';
 
@@ -37,7 +37,19 @@ const gone = isOutOfStock(product);
           {product.standard || product.description}
         </p>
         <div class="mt-2 flex flex-wrap items-center gap-x-5 gap-y-3 wq-in wq-d4">
-          <span class="wq-price text-xl text-on-photo">{money(product.price)}</span>
+          <span class="flex flex-wrap items-center gap-3">
+            <span class="wq-price text-xl text-on-photo">{money(product.price)}</span>
+            {
+              isOnSale(product) && (
+                <>
+                  <span class="wq-price text-sm text-on-photo/60 line-through">
+                    {money(product.regular_price)}
+                  </span>
+                  <span class="bg-ink px-2 py-0.5 text-[0.7rem] text-exhibit">عرض</span>
+                </>
+              )
+            }
+          </span>
           {
             gone ? (
               <span class="font-data text-[0.7rem] text-on-photo/70">نفدت الكمية</span>

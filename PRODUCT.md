@@ -48,8 +48,11 @@ carries it.
 - Two worlds, one shop: the light greige room by day and the olive night gallery, chosen by
   the visitor's system preference and switchable with the lamp in the footer. At night each
   photograph sits in its own pool of light; by day it rests on a lit plinth.
-- Cart, search, sorting, options and the gallery run client-side as plain TypeScript — no UI
-  framework; the entire client bundle is ~12 KB.
+- Cart and the product buy box are Svelte 5 islands; search, sorting and the gallery stay
+  plain TypeScript. Choice values in the data can carry their own stock and price.
+- Sales live in the data (`sale_price` plus a window). The crossed price, the badge and the
+  countdown appear only when the data is there, and the regular price returns when the window
+  ends.
 - Photographs are placeholder JPEGs from royalty-free stock, stored with each product
   (files in `public/images`, two sizes). They must never be presented as the shop's own
   photography, and a second image is never shown as another view of the same object
@@ -76,6 +79,7 @@ carries it.
   `options`, `keywords` and `featured` columns exist for enrichment. Categories are a D1 table.
 - Product photographs are placeholder JPEGs (royalty-free stock) in `public/images`, stored as
   paths with each product.
+- Schema changes are versioned in `migrations/`; operations are documented in `DATA.md`.
 - No reviews, testimonials, press, founder story or customer logos exist. Future work must not
   invent them.
 
