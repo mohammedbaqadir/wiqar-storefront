@@ -65,13 +65,19 @@ function toProduct(row: Row, categoryId: Map<string, number>, origin: string) {
   const price = num(row.price);
   const compareAt =
     row.compare_at_price === null || row.compare_at_price === undefined ? null : num(row.compare_at_price);
+  const salePrice = row.sale_price === null || row.sale_price === undefined ? null : num(row.sale_price);
   const startsAt = isoOrNull(row.sale_starts_at);
   const endsAt = isoOrNull(row.sale_ends_at);
   const now = Date.now();
   const windowOpen =
     (startsAt === null || now >= Date.parse(startsAt)) &&
     (endsAt === null || now <= Date.parse(endsAt));
-  const onSale = compareAt !== null && compareAt > price && windowOpen;
+  /* A sale is its own price: it applies while it sits below the regular price
+     and the window is open. The crossed value is the regular price, or a
+     higher compare-at when the catalogue carries one. When the window closes
+     the regular price is simply back — nothing to revert. */
+  const saleActive = salePrice !== null && salePrice > 0 && salePrice < price && windowOpen;
+  const base = compareAt !== null && compareAt > price ? compareAt : price;
   const quantity = row.quantity === null || row.quantity === undefined ? null : num(row.quantity);
   const images = list(row.images)
     .map((entry) => toImage((entry as Row).url, (entry as Row).alt, origin))
@@ -85,11 +91,11 @@ function toProduct(row: Row, categoryId: Map<string, number>, origin: string) {
     name: String(row.name ?? ""),
     subtitle: "",
     description: String(row.description ?? ""),
-    price,
-    regular_price: onSale ? compareAt : price,
-    sale_price: onSale ? price : null,
-    sale_starts_at: onSale ? startsAt : null,
-    sale_ends_at: onSale ? endsAt : null,
+    price: saleActive ? salePrice : price,
+    regular_price: base,
+    sale_price: saleActive ? salePrice : null,
+    sale_starts_at: saleActive ? startsAt : null,
+    sale_ends_at: saleActive ? endsAt : null,
     quantity,
     status: String(row.status ?? ""),
     is_out_of_stock: quantity !== null && quantity <= 0,

@@ -142,7 +142,7 @@ export const getRelated = async (product: ApiProduct, limit = 4): Promise<ApiPro
 };
 
 export const isOnSale = (product: ApiProduct): boolean =>
-  product.sale_price !== null && product.sale_price < product.regular_price;
+  product.regular_price > product.price;
 
 /** Gone: either the flag or an empty shelf. */
 export const isOutOfStock = (product: ApiProduct): boolean =>

@@ -28,11 +28,6 @@
   });
 
   const gone = $derived(product.is_out_of_stock || product.quantity === 0);
-  const onSale = $derived(
-    variantPrice === undefined &&
-      product.sale_price !== null &&
-      product.sale_price < product.regular_price
-  );
   const lowStockLabel = $derived(
     variantStock !== null && variantStock > 0 && variantStock <= 3 ? stockLabel(variantStock) : null
   );
@@ -66,15 +61,11 @@
 
   const saleEnd = $derived(product.sale_ends_at ? Date.parse(product.sale_ends_at) : null);
   const expired = $derived(saleEnd !== null && now > saleEnd);
-  const saleLive = $derived(onSale && !expired);
-  const payPrice = $derived(
-    saleLive
-      ? (product.sale_price ?? product.price)
-      : (variantPrice ?? (expired ? product.regular_price : product.price))
-  );
+  const showCross = $derived(!expired && product.regular_price > product.price);
+  const payPrice = $derived(variantPrice ?? (expired ? product.regular_price : product.price));
 
   const countdown = $derived.by(() => {
-    if (!saleLive || saleEnd === null) return null;
+    if (saleEnd === null || expired) return null;
     const left = saleEnd - now;
     if (left <= 0) return null;
     const days = Math.floor(left / 86_400_000);
@@ -99,7 +90,7 @@
   <div class="space-y-2">
     <div class="flex items-end gap-4">
       <span class="wq-price text-3xl text-room-ink">{money(payPrice)}</span>
-      {#if saleLive}
+      {#if showCross}
         <span class="wq-price text-base text-room-ink-3 line-through">
           {money(product.regular_price)}
         </span>
