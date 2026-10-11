@@ -23,6 +23,10 @@ standard. Success is a shop that reads as a real store — browsable, priced, bu
 a designer would call authored rather than assembled. The shop is expected to take real orders
 on Salla later, so nothing in the interface may block that switch.
 
+There is a second, stricter bar, because this front exists to prove the headless build: put it
+next to any stock Salla theme and a stranger must name three things it does that a theme
+cannot — and want them. Quiet is a tone, not an alibi.
+
 ## Positioning
 
 The list is short on purpose and the reason is written on the page: quality, taste and value in
@@ -33,6 +37,9 @@ carries it.
 ## Operating Context
 
 - Arabic-first, RTL, Gulf market; SAR including VAT; Arabic-Indic digits.
+- The store must feel alive: motion is part of the voice — choreographed entrances, shared
+  transitions, responsive feedback — not decoration added on top. Lean tooling only: CSS, the
+  View Transitions API, and Svelte; no animation libraries.
 - The catalogue is the merchant's own curation. The vitrine piece is a deliberate editorial
   choice (`featured` in the data), not whichever item happens to come first.
 - Published service promises: free delivery over ٥٠٠ ر.س، 14-day returns، cash on delivery،
@@ -55,10 +62,11 @@ carries it.
 - Sales live in the data (`sale_price` plus a window). The crossed price, the badge and the
   countdown appear only when the data is there, and the regular price returns when the window
   ends.
-- Photographs are placeholder JPEGs from royalty-free stock, stored with each product
-  (files in `public/images`, two sizes). They must never be presented as the shop's own
-  photography, and a second image is never shown as another view of the same object
-  unless it truly is one.
+- Photographs are placeholder JPEGs from royalty-free stock, stored with each product as
+  three views derived from one source frame — full, detail, alternate — documented in
+  `public/images/CREDITS.md`. They must never be presented as the shop's own photography;
+  a different object is never shown as this product, and real photography replaces each
+  set file-for-file when it arrives.
 - No accounts, wishlist or reviews exist.
 - The Salla runtime is deliberately **its own project** (`wiqar-backend`, a Cloudflare Worker):
   required at runtime for buying, never for building. The data seam is `src/lib/catalog.ts`; the buy
@@ -79,8 +87,8 @@ carries it.
 
 - A 35-piece catalogue in Cloudflare D1 with prices, stock, descriptions and image links;
   `options`, `keywords` and `featured` columns exist for enrichment. Categories are a D1 table.
-- Product photographs are placeholder JPEGs (royalty-free stock) in `public/images`, stored as
-  paths with each product.
+- Product photographs are placeholder JPEGs (royalty-free stock) in `public/images`, three
+  derived views per piece, stored as paths with each product.
 - Schema changes are versioned in `migrations/`; operations are documented in `DATA.md`.
 - No reviews, testimonials, press, founder story or customer logos exist. Future work must not
   invent them.
@@ -93,6 +101,8 @@ carries it.
 4. Every claim on the page has something behind it; nothing promises what the shop cannot do yet.
 5. Nothing is presented as something else — not a placeholder photo as a product view, not a mock
    backend as a working checkout.
+6. Quiet, never still — composure is the tone, motion is the life.
+7. At any moment this front does at least three things the theme system cannot.
 
 ## Accessibility & Inclusion
 
