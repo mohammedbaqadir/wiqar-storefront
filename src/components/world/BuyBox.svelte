@@ -159,6 +159,7 @@
         type="button"
         data-add-to-cart
         data-product-id={product.id}
+        data-product-sku={product.sku}
         data-product-slug={product.slug}
         data-product-name={product.name}
         data-product-price={payPrice}

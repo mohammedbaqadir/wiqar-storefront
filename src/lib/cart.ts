@@ -23,6 +23,8 @@ export interface CartLineInput {
   id: number;
   slug: string;
   name: string;
+  /** The catalogue sku — what a Salla cart line is identified by. */
+  sku?: string;
   /** Chosen values, in the order the product page asks for them. */
   options?: CartOption[];
   price: number;
@@ -73,6 +75,7 @@ const isLine = (value: unknown): value is CartLineInput & { quantity: number } =
     typeof line.image === 'string' &&
     typeof line.quantity === 'number' &&
     (line.max === null || typeof line.max === 'number') &&
+    (line.sku === undefined || typeof line.sku === 'string') &&
     (line.options === undefined || (Array.isArray(line.options) && line.options.every(isOption)))
   );
 };

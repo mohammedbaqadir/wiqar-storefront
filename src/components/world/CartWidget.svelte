@@ -62,6 +62,7 @@
           id: Number(data.productId),
           slug: data.productSlug ?? '',
           name,
+          sku: data.productSku || undefined,
           options: chosen.length > 0 ? chosen : undefined,
           price: Number(data.productPrice ?? 0),
           image: data.productImage ?? '',
