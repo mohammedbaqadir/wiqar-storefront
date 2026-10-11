@@ -9,7 +9,7 @@ Arabic-first (RTL), statically built with Astro.
 
 - **Astro** (static output) + **TypeScript**; **Bun** for install, build and run
 - **Svelte 5** islands for the interactive parts; **Tailwind CSS v4** + **Starwind UI** for the rest
-- Self-hosted Arabic typefaces: Naseeb, Amiri, IBM Plex Arabic / Mono
+- Self-hosted Arabic typefaces: Naseeb, Reem Kufi, Amiri, IBM Plex Arabic / Mono
 - Two worlds (day room, night gallery), View Transitions for page motion, `@astrojs/sitemap`
 
 ## Structure
@@ -17,14 +17,15 @@ Arabic-first (RTL), statically built with Astro.
 ```
 src/pages/       routes: home, catalog, category/[slug], product/[slug], search, checkout, 404
 src/layouts/     Base.astro — worlds, meta/OG, skip link, cart island, page transitions
-src/components/  world/ (the store's own parts) · starwind/ (vendored UI)
+src/components/  store/ (the shop's own parts) · starwind/ (vendored UI)
 src/lib/         api · cart (+ Svelte store) · checkout · format · schema · search · url · validate
 src/worker.ts    the /catalog.json route — D1 in, storefront-shaped JSON out
 src/data/        theme.ts (the two palettes)
-tools/sale.ts    the sale tool — wrangler against D1
+scripts/sale.ts  the sale tool — wrangler against D1
 migrations/      the D1 schema, versioned
 src/assets/      fonts
 src/styles/      world.css (tokens, worlds, motion) · world-fonts.css · starwind.css
+public/images/   product photography (1200px + 600px) · CREDITS.md
 ```
 
 ## How the data flows
@@ -37,6 +38,20 @@ a cron on the Worker rebuilds when a sale window opens or closes. Schema changes
 
 The cart drawer, header count and the product buy box (options, live price/stock, countdown) are
 Svelte 5 islands; search suggestions, sorting and the gallery stay small plain-TypeScript scripts.
+
+## How a purchase leaves the shop
+
+The handoff is real: `src/lib/checkout.ts` posts the cart — lines identified by SKU — to the
+sibling `wiqar-backend`, which builds a Salla cart holding those exact products and answers with
+Salla's `checkout_url`. The shopper finishes on Salla's hosted checkout.
+
+Two boundaries to know:
+
+- **The SKU is the join key** between D1 and Salla. A renamed SKU silently breaks that product's
+  handoff (details in `DATA.md`).
+- **The current store is a Salla demo store.** It accepts carts but refuses to complete orders —
+  Salla's own message: `لا يمكن إتمام الطلب من متجر تجريبي`. Real orders wait on a real Salla
+  store; nothing in this repo changes when that happens.
 
 ## Commands
 
@@ -56,12 +71,15 @@ On push to `main`, Cloudflare Workers Builds runs `bun run build` and deploys th
 deploy hook — the sale tool pings it, and the Worker's cron pings it when a sale window opens
 or closes. The build fails on invalid catalogue rows, so the last good deploy keeps serving.
 
-Product photos are placeholder JPEGs in `public/images` (1200px and 600px variants); D1
-stores their paths, and each is replaced by real product photography.
+Product photos are placeholder JPEGs in `public/images` (1200px and 600px variants, provenance
+in `CREDITS.md`); D1 stores their paths, and each is replaced by real product photography.
 
 ## Related project
 
-One sibling, in its own repository. It is not required for this one to build or run:
+One sibling, in its own repository (github.com/mohammedbaqadir/wiqar-backend) — required for
+buying, never for building:
 
-- **`wiqar-backend`** — the runtime that talks to Salla (catalogue, cart, checkout, token) for the
-  day this storefront goes headless. `src/lib/api.ts` is the seam it plugs into.
+- **`wiqar-backend`** — the worker that talks to Salla: tokens, catalogue reads, cart handoff,
+  webhooks. The data seam is `src/lib/api.ts` (D1 → pages); the buy seam is
+  `src/lib/checkout.ts` (cart → Salla). Set `PUBLIC_BACKEND_URL` to aim the storefront at a
+  different backend instance.

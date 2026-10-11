@@ -1,10 +1,10 @@
 ---
 import Base from '@/layouts/Base.astro';
-import SiteHeader from '@/components/world/SiteHeader.astro';
-import Vitrine from '@/components/world/Vitrine.astro';
-import DrawerRail from '@/components/world/DrawerRail.astro';
-import ProductGrid from '@/components/world/ProductGrid.astro';
-import SiteFooter from '@/components/world/SiteFooter.astro';
+import SiteHeader from '@/components/store/SiteHeader.astro';
+import Vitrine from '@/components/store/Vitrine.astro';
+import DrawerRail from '@/components/store/DrawerRail.astro';
+import ProductGrid from '@/components/store/ProductGrid.astro';
+import SiteFooter from '@/components/store/SiteFooter.astro';
 import { getProducts } from '@/lib/api';
 
 const products = await getProducts();

@@ -27,6 +27,12 @@ edits (D1 → wiqar-products → Console) work too, but then ping the rebuild.
 Every mark on the page is presence-driven: a sale renders the crossed price, the
 counter, and the badge; when the window ends the regular price is simply back.
 
+## SKUs are the join key
+
+Checkout hands the cart to Salla **line by line, by SKU** (`WQ-###`). A product's SKU is what
+ties a D1 row to its Salla product: renaming a SKU on either side silently breaks that
+product's handoff. New products must share their SKU across both.
+
 ## Rebuilds
 
 - `bun run sale` writes ping the deploy hook automatically.

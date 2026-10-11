@@ -37,8 +37,10 @@ carries it.
   choice (`featured` in the data), not whichever item happens to come first.
 - Published service promises: free delivery over ٥٠٠ ر.س، 14-day returns، cash on delivery،
   support by email and WhatsApp.
-- Payments and fulfilment are **not** wired. Checkout stops at a designed handoff in
-  `src/lib/checkout.ts` — the single place the integration will land.
+- Checkout hands off for real: `src/lib/checkout.ts` sends the cart (by SKU) to the Salla
+  runtime, which builds a Salla cart and returns the hosted `checkout_url`. The current store is
+  a Salla **demo** store — it accepts carts but refuses to complete orders; real orders wait on a
+  real Salla store.
 
 ## Capabilities and Constraints
 
@@ -58,11 +60,11 @@ carries it.
   photography, and a second image is never shown as another view of the same object
   unless it truly is one.
 - No accounts, wishlist or reviews exist.
-- The Salla runtime is deliberately **its own project** (`wiqar-backend`, a Cloudflare Worker) so
-  this storefront never depends on it structurally. The seam is `src/lib/api.ts`; if that project
-  is abandoned, nothing here has to change.
-- Still needed for real data and checkout: the Salla app record (an email address) and the app's
-  access token.
+- The Salla runtime is deliberately **its own project** (`wiqar-backend`, a Cloudflare Worker):
+  required at runtime for buying, never for building. The data seam is `src/lib/api.ts`; the buy
+  seam is `src/lib/checkout.ts`. If that project is abandoned, the shop still builds and browses.
+- The Salla app and its tokens already exist and flow; what's still missing for orders is a real
+  (non-demo) Salla store.
 
 ## Brand Commitments
 

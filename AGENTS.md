@@ -13,6 +13,13 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 The catalogue lives in Cloudflare D1 only; run sales with `bun run sale`, treat `migrations/`
 as the schema source, and follow `DATA.md` for the full operations guide.
 
+## Projects and docs
+
+Two repositories: this storefront, and its sibling `../backend` (`wiqar-backend`, the Salla
+runtime — read its README before touching checkout, tokens, or anything Salla). Here:
+`README.md` (what and how), `PRODUCT.md` (product truths and constraints), `DATA.md`
+(catalogue operations).
+
 ## Documentation
 
 Full documentation: https://docs.astro.build
