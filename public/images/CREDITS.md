@@ -8,7 +8,7 @@ keep the naming (`wq-XXX-1-1200.jpg` / `-600.jpg`) so nothing else changes.
 
 | File | Source |
 |---|---|
-| `wq-001-1` | https://images.unsplash.com/photo-1598911039131-9c352e9d77fe |
+| `wq-001-1` | https://images.unsplash.com/photo-1722927731527-a6cd21b33b27 |
 | `wq-002-1` | https://images.unsplash.com/photo-1634442490908-dc90210c8bce |
 | `wq-003-1` | https://images.unsplash.com/photo-1610089219534-80872697800a |
 | `wq-004-1` | https://images.unsplash.com/photo-1713566770925-becef7cbdd92 |

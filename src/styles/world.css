@@ -249,6 +249,28 @@ html[data-world='night'] .wq-mount {
   padding: 0.9rem 0.9rem 1.7rem;
 }
 
+/* ── the hero veil ──────────────────────────────────────────
+   One veil over every hero photograph, so even the lightest
+   image carries light text — heavier at night, where the room
+   is dim and a white photo would glare. */
+.wq-hero-scrim {
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--wq-scrim) 88%, transparent),
+    color-mix(in srgb, var(--wq-scrim) 40%, transparent) 48%,
+    color-mix(in srgb, var(--wq-scrim) 24%, transparent)
+  );
+}
+
+html[data-world='night'] .wq-hero-scrim {
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--wq-scrim) 94%, transparent),
+    color-mix(in srgb, var(--wq-scrim) 58%, transparent) 50%,
+    color-mix(in srgb, var(--wq-scrim) 40%, transparent)
+  );
+}
+
 /* The night grid breathes: three across on wide screens, roomier rows. */
 @media (min-width: 1024px) {
   html[data-world='night'] .wq-grid {

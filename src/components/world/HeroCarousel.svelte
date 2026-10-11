@@ -25,7 +25,7 @@
   const arm = () => {
     if (!running || document.hidden) return;
     halt();
-    timer = setInterval(() => go(active + 1), 7000);
+    timer = setInterval(() => go(active + 1), 6000);
   };
 
   /* A deliberate move resets the clock; hover, focus and a hidden tab pause it. */
@@ -83,10 +83,10 @@
           fetchpriority={index === 0 ? 'high' : undefined}
           class="absolute inset-0 size-full object-cover"
         />
-        <div class="absolute inset-0 bg-gradient-to-t from-scrim/75 via-scrim/20 to-scrim/5"></div>
+        <div class="wq-hero-scrim absolute inset-0"></div>
 
         <div class="absolute inset-x-0 bottom-0">
-          <div class="mx-auto flex max-w-6xl flex-col items-start gap-3 px-5 pb-16 lg:px-8 lg:pb-20">
+          <div class="copy mx-auto flex max-w-6xl flex-col items-start gap-3 px-5 pb-16 lg:px-8 lg:pb-20">
             <p class="flex items-center gap-3 font-data text-[0.7rem] text-on-photo/70">
               <span class="tracking-normal">المختارة</span>
               <span aria-hidden="true" class="h-px w-6 bg-on-photo/40"></span>
@@ -195,11 +195,11 @@
     inset: 0;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 1200ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .slide img {
-    transform: scale(1.06);
+    transform: scale(1.08) translateX(-2%);
     transition: transform 9000ms ease-out;
     will-change: transform;
   }
@@ -210,17 +210,40 @@
   }
 
   .slide.active img {
-    transform: scale(1);
+    transform: scale(1) translateX(0);
   }
 
+  /* The copy steps in a beat after the fade begins. */
+  .copy {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 800ms ease 200ms,
+      transform 800ms cubic-bezier(0.22, 1, 0.36, 1) 200ms;
+  }
+
+  .slide.active .copy {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Reduced motion: no zoom, no drift, no stepping — but a soft
+     half-beat fade instead of a hard cut. Autoplay stays off. */
   @media (prefers-reduced-motion: reduce) {
-    .slide,
-    .slide img {
-      transition: none;
+    .slide {
+      transition: opacity 350ms linear;
     }
 
     .slide img {
       transform: none;
+      transition: none;
+    }
+
+    .copy,
+    .slide.active .copy {
+      opacity: 1;
+      transform: none;
+      transition: none;
     }
   }
 </style>
