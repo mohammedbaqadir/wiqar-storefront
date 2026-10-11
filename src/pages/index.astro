@@ -8,10 +8,14 @@ import SiteFooter from '@/components/world/SiteFooter.astro';
 import { getProducts } from '@/lib/api';
 
 const products = await getProducts();
-/** The vitrine piece is designated in the catalogue, not by array order. */
-const lead = products.find((product) => product.featured) ?? products[0];
-const featured = products.filter((product) => product.id !== lead.id).slice(0, 8);
-const share = lead.image.url;
+/** The vitrine: flagged pieces lead, the rest fill in newest-first; five at most. */
+const slides = [
+  ...products.filter((product) => product.featured),
+  ...products.filter((product) => !product.featured),
+].slice(0, 5);
+const inHero = new Set(slides.map((product) => product.slug));
+const featured = products.filter((product) => !inHero.has(product.slug)).slice(0, 8);
+const share = slides[0].image.url;
 
 const promises = [
   { term: 'الجودة', note: 'مواد تدوم، وتشطيب لا يتقشّر بعد شهر.' },
@@ -23,7 +27,7 @@ const promises = [
 <Base image={share}>
   <SiteHeader />
   <main id="main">
-    <Vitrine product={lead} />
+    <Vitrine products={slides} />
     <DrawerRail />
     <ProductGrid products={featured} title="مقتنيات مختارة" />
 

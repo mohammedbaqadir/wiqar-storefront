@@ -1,69 +1,13 @@
 ---
-import Button from '@/components/starwind/button/Button.astro';
-import ProductPhoto from './ProductPhoto.astro';
-import { isLowStock, isOnSale, isOutOfStock, lowStockLabel, type ApiProduct } from '@/lib/api';
-import { money } from '@/lib/format';
-import { url } from '@/lib/url';
+import HeroCarousel from './HeroCarousel.svelte';
+import type { ApiProduct } from '@/lib/api';
 
 interface Props {
-  product: ApiProduct;
+  products: ApiProduct[];
 }
 
-const { product } = Astro.props;
-const gone = isOutOfStock(product);
+const { products } = Astro.props;
 ---
 
-<section class="relative border-b border-hairline">
-  <div class="relative min-h-[48vh] overflow-hidden bg-exhibit-2 sm:min-h-[54vh] lg:min-h-[62vh]">
-    <ProductPhoto
-      path={product.image.url}
-      alt={product.image.alt}
-      priority
-      class="absolute inset-0 size-full object-cover wq-in-photo"
-    />
-    <div class="absolute inset-0 bg-gradient-to-t from-scrim/75 via-scrim/20 to-scrim/5"></div>
-
-    <div class="absolute inset-x-0 bottom-0">
-      <div class="mx-auto flex max-w-6xl flex-col items-start gap-3 px-5 pb-10 lg:px-8 lg:pb-14">
-        <p class="flex items-center gap-3 font-data text-[0.7rem] text-on-photo/70 wq-in wq-d1">
-          <span class="tracking-normal">المختارة</span>
-          <span aria-hidden="true" class="h-px w-6 bg-on-photo/40"></span>
-          <span class="tracking-[0.2em]" dir="ltr">{product.sku}</span>
-        </p>
-        <h1 class="font-display text-4xl leading-tight text-on-photo lg:text-6xl wq-in wq-d2">
-          {product.name}
-        </h1>
-        <p class="max-w-xl font-reading text-base leading-loose text-on-photo/85 lg:text-lg wq-in wq-d3">
-          {product.standard || product.description}
-        </p>
-        <div class="mt-2 flex flex-wrap items-center gap-x-5 gap-y-3 wq-in wq-d4">
-          <span class="flex flex-wrap items-center gap-3">
-            <span class="wq-price text-xl text-on-photo">{money(product.price)}</span>
-            {
-              isOnSale(product) && (
-                <>
-                  <span class="wq-price text-sm text-on-photo/60 line-through">
-                    {money(product.regular_price)}
-                  </span>
-                  <span class="bg-ink px-2 py-0.5 text-[0.7rem] text-exhibit">عرض</span>
-                </>
-              )
-            }
-          </span>
-          {
-            gone ? (
-              <span class="font-data text-[0.7rem] text-on-photo/70">نفدت الكمية</span>
-            ) : (
-              isLowStock(product) && (
-                <span class="font-data text-[0.7rem] text-on-photo/70">{lowStockLabel(product)}</span>
-              )
-            )
-          }
-          <Button as="a" href={url(`/product/${product.slug}`)} variant="outline">
-            {gone ? 'تفاصيل القطعة' : 'تسوّق القطعة'}
-          </Button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<h1 class="sr-only">وقار — مقتنيات مختارة</h1>
+<HeroCarousel client:load products={products} />
