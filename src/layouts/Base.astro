@@ -2,8 +2,8 @@
 import '@/styles/starwind.css';
 import '@/styles/world.css';
 import { ClientRouter } from 'astro:transitions';
-import CartWidget from '@/components/store/CartWidget.svelte';
-import { materials, nightMaterials, themeVars } from '@/data/theme';
+import CartDrawer from '@/components/store/CartDrawer.svelte';
+import { dayMaterials, nightMaterials, themeVars } from '@/data/theme';
 import { url } from '@/lib/url';
 
 interface Props {
@@ -23,7 +23,7 @@ const {
 
 /* The theme is injected from the materials data: one source of truth.
    The night world arrives with the same shape, keyed off the document. */
-const themeCss = `:root{${themeVars(materials)}} html[data-world='night']{${themeVars(nightMaterials)}}`;
+const themeCss = `:root{${themeVars(dayMaterials)}} html[data-world='night']{${themeVars(nightMaterials)}}`;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const shareImage = image ? new URL(image, Astro.site) : undefined;
@@ -86,7 +86,7 @@ const shareImage = image ? new URL(image, Astro.site) : undefined;
     </a>
 
     <slot />
-    <CartWidget client:load />
+    <CartDrawer client:load />
 
     <script is:inline>
       (function () {

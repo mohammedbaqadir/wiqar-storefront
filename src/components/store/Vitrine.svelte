@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { isLowStock, isOnSale, isOutOfStock, lowStockLabel, type ApiProduct } from '@/lib/api';
+  import { isLowStock, isOnSale, isOutOfStock, lowStockLabel, type Product } from '@/lib/catalog';
   import { money } from '@/lib/format';
   import { url } from '@/lib/url';
 
   interface Props {
-    products: ApiProduct[];
+    products: Product[];
   }
 
   let { products }: Props = $props();

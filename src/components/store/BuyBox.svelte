@@ -1,10 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { ApiProduct } from '@/lib/api';
+  import type { Product } from '@/lib/catalog';
   import { money, stockLabel, toArabicDigits } from '@/lib/format';
 
   interface Props {
-    product: ApiProduct;
+    product: Product;
   }
 
   let { product }: Props = $props();

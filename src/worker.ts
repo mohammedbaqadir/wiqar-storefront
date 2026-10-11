@@ -4,7 +4,7 @@
  * `wrangler.jsonc` sends only /catalog.json here (run_worker_first); everything
  * else — pages and the self-hosted photos under /images/ — is served straight
  * from `dist/`. The route reads the D1 catalogue and answers in the shape
- * src/lib/api.ts expects, so the build fetches its data from the same Worker
+ * src/lib/catalog.ts expects, so the build fetches its data from the same Worker
  * the site is served from.
  */
 
@@ -20,14 +20,6 @@ interface Env {
 }
 
 type Row = Record<string, unknown>;
-
-const STORE = {
-  name: "وقار",
-  name_en: "WIỌAR",
-  currency: "SAR",
-  locale: "ar",
-  domain: "wiqar-storefront.directed-countless.workers.dev",
-};
 
 const num = (value: unknown, fallback = 0): number =>
   typeof value === "number" ? value : Number(value ?? fallback) || fallback;
@@ -91,7 +83,6 @@ function toProduct(row: Row, categoryId: Map<string, number>, origin: string) {
     sku: String(row.sku ?? ""),
     slug: String(row.slug || String(row.sku ?? "").toLowerCase()),
     name: String(row.name ?? ""),
-    subtitle: "",
     description: String(row.description ?? ""),
     price: saleActive ? salePrice : price,
     regular_price: base,
@@ -102,8 +93,6 @@ function toProduct(row: Row, categoryId: Map<string, number>, origin: string) {
     status: String(row.status ?? ""),
     is_out_of_stock: quantity !== null && quantity <= 0,
     category_id: categoryId.get(String(row.category ?? "")) ?? 0,
-    origin: "",
-    standard: "",
     featured: Boolean(row.featured),
     keywords: list(row.keywords).map((word) => String(word)),
     created_at: String(row.created_at ?? ""),
@@ -140,17 +129,16 @@ export default {
       env.CATALOG_DB.prepare("SELECT id, slug, name FROM categories ORDER BY sort, id").all<Row>(),
     ]);
 
-    const rooms = categories.results.map((row) => ({
+    const categoryList = categories.results.map((row) => ({
       id: num(row.id),
       slug: String(row.slug ?? ""),
       name: String(row.name ?? ""),
     }));
-    const byName = new Map(rooms.map((room) => [room.name, room.id]));
+    const categoryIdByName = new Map(categoryList.map((category) => [category.name, category.id]));
 
     return Response.json({
-      store: STORE,
-      categories: rooms,
-      products: products.results.map((row) => toProduct(row, byName, url.origin)),
+      categories: categoryList,
+      products: products.results.map((row) => toProduct(row, categoryIdByName, url.origin)),
     });
   },
 

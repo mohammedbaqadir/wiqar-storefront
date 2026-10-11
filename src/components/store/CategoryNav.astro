@@ -1,5 +1,5 @@
 ---
-import { getCategories, getProducts } from '@/lib/api';
+import { getCategories, getProducts } from '@/lib/catalog';
 import { toArabicDigits } from '@/lib/format';
 import { url } from '@/lib/url';
 
@@ -13,12 +13,12 @@ const { current } = Astro.props;
 const categories = await getCategories();
 const products = await getProducts();
 
-const rooms = categories
+const withCounts = categories
   .map((category) => ({
     category,
     count: products.filter((product) => product.category_id === category.id).length,
   }))
-  .filter((room) => room.count > 0);
+  .filter((entry) => entry.count > 0);
 ---
 
 <nav class="flex flex-wrap gap-2" aria-label="الأقسام">
@@ -34,7 +34,7 @@ const rooms = categories
   </a>
 
   {
-    rooms.map(({ category, count }) => (
+    withCounts.map(({ category, count }) => (
       <a
         href={url(`/category/${category.slug}`)}
         aria-current={current === category.slug ? 'page' : undefined}

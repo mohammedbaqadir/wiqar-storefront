@@ -61,7 +61,7 @@ carries it.
   unless it truly is one.
 - No accounts, wishlist or reviews exist.
 - The Salla runtime is deliberately **its own project** (`wiqar-backend`, a Cloudflare Worker):
-  required at runtime for buying, never for building. The data seam is `src/lib/api.ts`; the buy
+  required at runtime for buying, never for building. The data seam is `src/lib/catalog.ts`; the buy
   seam is `src/lib/checkout.ts`. If that project is abandoned, the shop still builds and browses.
 - The Salla app and its tokens already exist and flow; what's still missing for orders is a real
   (non-demo) Salla store.

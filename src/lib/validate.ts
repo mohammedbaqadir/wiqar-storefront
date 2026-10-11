@@ -2,12 +2,12 @@
  * The catalogue gate, run during the build: problems fail the build, so the
  * last good deploy keeps serving. Rules live here and nowhere else.
  */
-import type { ApiCatalog, ApiProduct } from '@/lib/api';
+import type { Catalog, Product } from '@/lib/catalog';
 
-const place = (product: ApiProduct): string =>
+const place = (product: Product): string =>
   `product ${String(product.sku ?? '').trim() || '(missing sku)'}`;
 
-export const catalogProblems = (catalog: ApiCatalog): string[] => {
+export const catalogProblems = (catalog: Catalog): string[] => {
   const problems: string[] = [];
   const slugs = new Set<string>();
   const categoryIds = new Set(catalog.categories.map((category) => category.id));

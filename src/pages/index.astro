@@ -1,11 +1,11 @@
 ---
 import Base from '@/layouts/Base.astro';
 import SiteHeader from '@/components/store/SiteHeader.astro';
-import Vitrine from '@/components/store/Vitrine.astro';
-import DrawerRail from '@/components/store/DrawerRail.astro';
+import Vitrine from '@/components/store/Vitrine.svelte';
+import CategoryStrip from '@/components/store/CategoryStrip.astro';
 import ProductGrid from '@/components/store/ProductGrid.astro';
 import SiteFooter from '@/components/store/SiteFooter.astro';
-import { getProducts } from '@/lib/api';
+import { getProducts } from '@/lib/catalog';
 
 const products = await getProducts();
 /** The vitrine: flagged pieces lead, the rest fill in newest-first; five at most. */
@@ -27,8 +27,9 @@ const promises = [
 <Base image={share}>
   <SiteHeader />
   <main id="main">
-    <Vitrine products={slides} />
-    <DrawerRail />
+    <h1 class="sr-only">وقار — مقتنيات مختارة</h1>
+    <Vitrine client:load products={slides} />
+    <CategoryStrip />
     <ProductGrid products={featured} title="مقتنيات مختارة" />
 
     <section id="standard" class="border-t border-hairline bg-room-2">

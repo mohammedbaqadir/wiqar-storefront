@@ -1,12 +1,12 @@
-import { isOutOfStock, type ApiCategory, type ApiProduct } from '@/lib/api';
+import { isOutOfStock, type Category, type Product } from '@/lib/catalog';
 
 /**
  * Structured data for a product page. Google reads this to show price and
  * availability in results, so it only repeats what the page already says.
  */
 export const productSchema = (
-  product: ApiProduct,
-  context: { url: string; image?: string; category?: ApiCategory | null }
+  product: Product,
+  context: { url: string; image?: string; category?: Category | null }
 ) => ({
   '@context': 'https://schema.org',
   '@type': 'Product',

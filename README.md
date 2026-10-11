@@ -18,7 +18,7 @@ Arabic-first (RTL), statically built with Astro.
 src/pages/       routes: home, catalog, category/[slug], product/[slug], search, checkout, 404
 src/layouts/     Base.astro — worlds, meta/OG, skip link, cart island, page transitions
 src/components/  store/ (the shop's own parts) · starwind/ (vendored UI)
-src/lib/         api · cart (+ Svelte store) · checkout · format · schema · search · url · validate
+src/lib/         catalog · cart (+ Svelte store) · checkout · format · structured-data · search · url · validate
 src/worker.ts    the /catalog.json route — D1 in, storefront-shaped JSON out
 src/data/        theme.ts (the two palettes)
 scripts/sale.ts  the sale tool — wrangler against D1
@@ -31,7 +31,7 @@ public/images/   product photography (1200px + 600px) · CREDITS.md
 ## How the data flows
 
 Cloudflare D1 `wiqar-products` is the only database. The store's own Worker (`src/worker.ts`)
-serves it as `/catalog.json`; `src/lib/api.ts` validates and reads it at build time. Changes go
+serves it as `/catalog.json`; `src/lib/catalog.ts` validates and reads it at build time. Changes go
 through `bun run sale` (or the D1 console) and ping the deploy hook, which rebuilds and publishes;
 a cron on the Worker rebuilds when a sale window opens or closes. Schema changes are versioned in
 `migrations/`; the operations guide is `DATA.md`.
@@ -80,6 +80,6 @@ One sibling, in its own repository (github.com/mohammedbaqadir/wiqar-backend) �
 buying, never for building:
 
 - **`wiqar-backend`** — the worker that talks to Salla: tokens, catalogue reads, cart handoff,
-  webhooks. The data seam is `src/lib/api.ts` (D1 → pages); the buy seam is
+  webhooks. The data seam is `src/lib/catalog.ts` (D1 → pages); the buy seam is
   `src/lib/checkout.ts` (cart → Salla). Set `PUBLIC_BACKEND_URL` to aim the storefront at a
   different backend instance.

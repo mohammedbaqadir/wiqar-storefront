@@ -4,7 +4,7 @@ import SiteHeader from '@/components/store/SiteHeader.astro';
 import SiteFooter from '@/components/store/SiteFooter.astro';
 import CategoryNav from '@/components/store/CategoryNav.astro';
 import ProductGrid from '@/components/store/ProductGrid.astro';
-import { getProducts } from '@/lib/api';
+import { getProducts } from '@/lib/catalog';
 import { toArabicDigits } from '@/lib/format';
 
 const products = await getProducts();

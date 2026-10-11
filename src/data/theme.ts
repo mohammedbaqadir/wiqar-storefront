@@ -45,7 +45,7 @@ export interface Materials {
 }
 
 /** Day — the greige room, unchanged. */
-export const materials: Materials = {
+export const dayMaterials: Materials = {
   room: '#edeae3',
   room2: '#e4e0d6',
   room3: '#cfcabd',
@@ -97,28 +97,28 @@ export const nightMaterials: Materials = {
 };
 
 /** Serialises the materials into the CSS custom properties the app reads. */
-export const themeVars = (m: Materials): string =>
+export const themeVars = (materials: Materials): string =>
   [
-    `--wq-room:${m.room}`,
-    `--wq-room-2:${m.room2}`,
-    `--wq-room-3:${m.room3}`,
-    `--wq-exhibit:${m.exhibit}`,
-    `--wq-exhibit-2:${m.exhibit2}`,
-    `--wq-ink:${m.ink}`,
-    `--wq-ink-2:${m.ink2}`,
-    `--wq-ink-3:${m.ink3}`,
-    `--wq-room-ink:${m.roomInk}`,
-    `--wq-room-ink-2:${m.roomInk2}`,
-    `--wq-room-ink-3:${m.roomInk3}`,
-    `--wq-deep:${m.deep}`,
-    `--wq-deep-ink:${m.deepInk}`,
-    `--wq-deep-ink-2:${m.deepInk2}`,
-    `--wq-accent:${m.accent}`,
-    `--wq-accent-d:${m.accentD}`,
-    `--wq-accent-l:${m.accentL}`,
-    `--wq-signal:${m.signal}`,
-    `--wq-hairline:${m.hairline}`,
-    `--wq-hairline-ink:${m.hairlineInk}`,
-    `--wq-scrim:${m.scrim}`,
-    `--wq-on-photo:${m.onPhoto}`,
+    `--wq-room:${materials.room}`,
+    `--wq-room-2:${materials.room2}`,
+    `--wq-room-3:${materials.room3}`,
+    `--wq-exhibit:${materials.exhibit}`,
+    `--wq-exhibit-2:${materials.exhibit2}`,
+    `--wq-ink:${materials.ink}`,
+    `--wq-ink-2:${materials.ink2}`,
+    `--wq-ink-3:${materials.ink3}`,
+    `--wq-room-ink:${materials.roomInk}`,
+    `--wq-room-ink-2:${materials.roomInk2}`,
+    `--wq-room-ink-3:${materials.roomInk3}`,
+    `--wq-deep:${materials.deep}`,
+    `--wq-deep-ink:${materials.deepInk}`,
+    `--wq-deep-ink-2:${materials.deepInk2}`,
+    `--wq-accent:${materials.accent}`,
+    `--wq-accent-d:${materials.accentD}`,
+    `--wq-accent-l:${materials.accentL}`,
+    `--wq-signal:${materials.signal}`,
+    `--wq-hairline:${materials.hairline}`,
+    `--wq-hairline-ink:${materials.hairlineInk}`,
+    `--wq-scrim:${materials.scrim}`,
+    `--wq-on-photo:${materials.onPhoto}`,
   ].join(';');
