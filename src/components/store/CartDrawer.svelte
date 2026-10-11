@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte';
-  import { lineKey, optionLabel, FREE_SHIPPING_AT, type CartLineInput } from '@/lib/cart';
+  import { freeShippingNote, freeShippingProgress, lineKey, optionLabel, type CartLineInput } from '@/lib/cart';
   import { cart } from '@/lib/cart.svelte';
   import { money, toArabicDigits } from '@/lib/format';
   import { url } from '@/lib/url';
@@ -12,7 +12,7 @@
   let recentTimer: ReturnType<typeof setTimeout> | undefined;
 
   const summary = $derived(cart.summary);
-  const progress = $derived(Math.min(100, Math.round((summary.subtotal / FREE_SHIPPING_AT) * 100)));
+  const progress = $derived(freeShippingProgress(summary.subtotal));
 
   /* Opening and closing come with their manners: scroll lock, focus in and
      out. The effect reads only `open`, so the stores never loop. */
@@ -245,11 +245,7 @@
 
       <footer class="flex flex-col gap-4 border-t border-hairline-ink px-5 py-4">
         <div class="space-y-2">
-          <p class="text-[0.8rem] text-ink-2">
-            {summary.toFreeShipping > 0
-              ? `أضف ${money(summary.toFreeShipping)} للحصول على توصيل مجاني.`
-              : 'التوصيل مجاني.'}
-          </p>
+          <p class="text-[0.8rem] text-ink-2">{freeShippingNote(summary.toFreeShipping)}</p>
           <div class="h-[3px] w-full bg-exhibit-2">
             <span
               class="block h-full bg-accent transition-[width] duration-300"

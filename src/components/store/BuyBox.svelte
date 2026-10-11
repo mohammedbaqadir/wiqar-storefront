@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { Product } from '@/lib/catalog';
+  import { isOutOfStock, type Product } from '@/lib/catalog';
   import { money, stockLabel, toArabicDigits } from '@/lib/format';
 
   interface Props {
@@ -27,8 +27,8 @@
     return tracked.length > 0 ? Math.min(...tracked) : null;
   });
 
-  const gone = $derived(product.is_out_of_stock || product.quantity === 0);
-  const lowStockLabel = $derived(
+  const gone = $derived(isOutOfStock(product));
+  const lowStockNote = $derived(
     variantStock !== null && variantStock > 0 && variantStock <= 3 ? stockLabel(variantStock) : null
   );
 
@@ -170,8 +170,8 @@
         أضف إلى السلة
       </button>
     </div>
-    {#if lowStockLabel}
-      <p class="text-[0.8rem] text-signal">{lowStockLabel}</p>
+    {#if lowStockNote}
+      <p class="text-[0.8rem] text-signal">{lowStockNote}</p>
     {/if}
   {/if}
 </div>

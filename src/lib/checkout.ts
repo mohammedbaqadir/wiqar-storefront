@@ -1,4 +1,4 @@
-import { readCart, totals, type CartLine } from '@/lib/cart';
+import { FREE_SHIPPING_AT, readCart, totals, type CartLine } from '@/lib/cart';
 
 /**
  * The purchase exit.
@@ -29,8 +29,8 @@ export interface CheckoutLine {
 export const SHIPPING_FLAT = 25;
 
 /** What shipping costs on a given basket. */
-export const shippingFor = (subtotal: number, freeAt = 500): number =>
-  subtotal >= freeAt ? 0 : SHIPPING_FLAT;
+export const shippingFor = (subtotal: number): number =>
+  subtotal >= FREE_SHIPPING_AT ? 0 : SHIPPING_FLAT;
 
 export interface CheckoutOrder {
   lines: CheckoutLine[];

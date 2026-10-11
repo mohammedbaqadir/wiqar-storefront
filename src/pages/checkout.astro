@@ -129,7 +129,7 @@ import { url } from '@/lib/url';
 </template>
 
 <script>
-  import { FREE_SHIPPING_AT, optionLabel, readCart, removeLine, setQuantity, subscribe, totals, type CartLine } from '@/lib/cart';
+  import { freeShippingNote, freeShippingProgress, optionLabel, readCart, removeLine, setQuantity, subscribe, totals, type CartLine } from '@/lib/cart';
   import { beginCheckout, buildOrder, shippingFor } from '@/lib/checkout';
   import { money, toArabicDigits } from '@/lib/format';
   import { url } from '@/lib/url';
@@ -195,21 +195,17 @@ import { url } from '@/lib/url';
       show(empty, lines.length === 0);
 
       const summary = totals(lines);
-      const shipping = shippingFor(summary.subtotal, FREE_SHIPPING_AT);
+      const shipping = shippingFor(summary.subtotal);
 
       if (subtotalEl) subtotalEl.textContent = money(summary.subtotal);
       if (shippingEl) shippingEl.textContent = shipping === 0 ? 'مجاني' : money(shipping);
       if (totalEl) totalEl.textContent = money(summary.subtotal + shipping);
 
       if (noteEl) {
-        noteEl.textContent =
-          summary.toFreeShipping === 0
-            ? 'التوصيل مجاني على هذا الطلب.'
-            : `أضف ${money(summary.toFreeShipping)} للحصول على توصيل مجاني.`;
+        noteEl.textContent = freeShippingNote(summary.toFreeShipping);
       }
       if (progressEl) {
-        const share = Math.round((summary.subtotal / FREE_SHIPPING_AT) * 100);
-        progressEl.style.width = `${Math.min(100, share)}%`;
+        progressEl.style.width = `${freeShippingProgress(summary.subtotal)}%`;
       }
     };
 

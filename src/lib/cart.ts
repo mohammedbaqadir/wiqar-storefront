@@ -14,6 +14,8 @@
  * throws on access, and a cart is never worth breaking the page for.
  */
 
+import { money } from '@/lib/format';
+
 export interface CartOption {
   name: string;
   value: string;
@@ -47,6 +49,16 @@ export interface CartTotals {
 
 const STORAGE_KEY = 'wq-cart';
 export const FREE_SHIPPING_AT = 500;
+
+/** 0–100 of the way to free shipping; the drawer and the checkout share it. */
+export const freeShippingProgress = (subtotal: number): number =>
+  Math.min(100, Math.round((subtotal / FREE_SHIPPING_AT) * 100));
+
+/** The free-shipping sentence, one place so the drawer and the checkout never drift. */
+export const freeShippingNote = (toFreeShipping: number): string =>
+  toFreeShipping > 0
+    ? `أضف ${money(toFreeShipping)} للحصول على توصيل مجاني.`
+    : 'التوصيل مجاني.';
 
 type Listener = (lines: CartLine[]) => void;
 const listeners = new Set<Listener>();
