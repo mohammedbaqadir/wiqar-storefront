@@ -2,8 +2,21 @@
 
 The catalogue lives in **D1 — `wiqar-products` — and nowhere else.** The storefront
 build fetches it through the worker's `/catalog.json` route and bakes it into the
-static pages. Auth for the commands below comes from `.env` (git-ignored):
-`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `DEPLOY_HOOK_URL`.
+static pages.
+
+## Credentials
+
+`.env` (git-ignored) carries three values; nothing else in this project needs a key:
+
+| name | where it comes from | what it is for |
+|---|---|---|
+| `CLOUDFLARE_API_TOKEN` | Cloudflare dashboard → My Profile → API Tokens — this project's own token, the backend has a different one; grant Workers Scripts: Edit and D1: Edit | `wrangler deploy`, worker secrets, and every command below |
+| `CLOUDFLARE_ACCOUNT_ID` | the same dashboard | which account the commands act on |
+| `DEPLOY_HOOK_URL` | Workers & Pages → `wiqar-storefront` → Settings → Builds & deployments → deploy hook | rebuilding the site after a data change; the worker keeps its own copy as a secret |
+
+Cloudflare secrets are write-only — `.env` is the only local record of the hook's value (the
+dashboard can show or recreate the hook). To stand the project up elsewhere: create the token,
+copy the account id, create a deploy hook, set it as the worker secret, and fill `.env`.
 
 ## Daily operations (from the repo root)
 
