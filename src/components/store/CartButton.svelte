@@ -24,6 +24,7 @@
 
 <button
   type="button"
+  data-cart-button
   onclick={() => (cart.open ? cart.hide() : cart.show())}
   class="inline-flex min-h-11 min-w-11 items-center justify-center gap-2 text-room-ink transition-colors hover:text-accent-d"
   aria-label="السلة"

@@ -83,7 +83,7 @@
 
   /* Same classes the starwind Button renders, so the island does not drift. */
   const buttonClass =
-    'inline-flex items-center justify-center gap-1.5 rounded-md font-medium whitespace-nowrap transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 bg-foreground text-background hover:bg-foreground/90 focus-visible:ring-outline/50 h-11 px-5 text-base';
+    'inline-flex items-center justify-center gap-1.5 rounded-md font-medium whitespace-nowrap transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 bg-foreground text-background hover:bg-foreground/90 focus-visible:ring-outline/50 h-11 px-5 text-base active:scale-[0.98]';
 </script>
 
 <div data-buy class="space-y-5 wq-in wq-d2">

@@ -14,6 +14,8 @@
   let timer: ReturnType<typeof setInterval> | undefined;
   let running = false;
   let touchX: number | null = null;
+  let sceneEl = $state<HTMLElement | undefined>(undefined);
+  let motionOk = false;
 
   const go = (index: number) => (active = (index + products.length) % products.length);
 
@@ -45,24 +47,55 @@
     touchX = null;
   };
 
+  /* The scene answers the pointer: a small tilt, composed in CSS vars. */
+  const onPointerMove = (event: PointerEvent) => {
+    if (!motionOk || !sceneEl || event.pointerType !== 'mouse') return;
+    const rect = sceneEl.getBoundingClientRect();
+    sceneEl.style.setProperty('--tx', ((event.clientX - rect.left) / rect.width - 0.5).toFixed(3));
+    sceneEl.style.setProperty('--ty', ((event.clientY - rect.top) / rect.height - 0.5).toFixed(3));
+  };
+
+  const onPointerLeave = () => {
+    if (!sceneEl) return;
+    sceneEl.style.setProperty('--tx', '0');
+    sceneEl.style.setProperty('--ty', '0');
+  };
+
   onMount(() => {
-    running = products.length > 1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    motionOk = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    running = products.length > 1 && motionOk;
     arm();
     const onVisibility = () => (document.hidden ? halt() : arm());
     document.addEventListener('visibilitychange', onVisibility);
+
+    /* The scene lifts as the page scrolls past it. One style write per event,
+       no rAF — so it can never stall in a background tab. */
+    const updateLift = () => {
+      if (!motionOk || !sceneEl) return;
+      const rect = sceneEl.getBoundingClientRect();
+      const lift = Math.min(1, Math.max(0, -rect.top / (rect.height || 1)));
+      sceneEl.style.setProperty('--lift', lift.toFixed(3));
+    };
+    updateLift();
+    window.addEventListener('scroll', updateLift, { passive: true });
+
     return () => {
       halt();
       document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('scroll', updateLift);
     };
   });
 </script>
 
 <section
+  bind:this={sceneEl}
   class="relative border-b border-hairline"
   aria-roledescription="carousel"
   aria-label="المختارات"
   onmouseenter={halt}
   onmouseleave={arm}
+  onpointermove={onPointerMove}
+  onpointerleave={onPointerLeave}
   onfocusin={halt}
   onfocusout={arm}
   ontouchstart={onTouchStart}
@@ -76,13 +109,15 @@
         inert={index === active ? undefined : true}
         aria-hidden={index === active ? undefined : true}
       >
-        <img
-          src={product.image.url}
-          alt={product.image.alt}
-          loading={index === 0 ? 'eager' : 'lazy'}
-          fetchpriority={index === 0 ? 'high' : undefined}
-          class="absolute inset-0 size-full object-cover"
-        />
+        <div class="photo">
+          <img
+            src={product.image.url}
+            alt={product.image.alt}
+            loading={index === 0 ? 'eager' : 'lazy'}
+            fetchpriority={index === 0 ? 'high' : undefined}
+            class="absolute inset-0 size-full object-cover"
+          />
+        </div>
         <div class="wq-hero-scrim absolute inset-0"></div>
 
         <div class="absolute inset-x-0 bottom-0">
@@ -204,6 +239,19 @@
     will-change: transform;
   }
 
+  /* The photograph layer: pointer tilt + the scroll lift compose here. */
+  .photo {
+    position: absolute;
+    inset: -6%;
+    transform: translate3d(
+      calc(var(--tx, 0) * 12px),
+      calc(var(--ty, 0) * 9px + var(--lift, 0) * 26px),
+      0
+    );
+    transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+
   .slide.active {
     opacity: 1;
     pointer-events: auto;
@@ -232,6 +280,11 @@
   @media (prefers-reduced-motion: reduce) {
     .slide {
       transition: opacity 350ms linear;
+    }
+
+    .photo {
+      transform: none;
+      transition: none;
     }
 
     .slide img {

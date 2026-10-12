@@ -14,6 +14,44 @@
   const summary = $derived(cart.summary);
   const progress = $derived(freeShippingProgress(summary.subtotal));
 
+  /* The piece flies to the cart button — a small reward for every add. */
+  const flyToCart = (source: HTMLElement, imageUrl: string) => {
+    const target = document.querySelector<HTMLElement>('[data-cart-button]');
+    if (!target || imageUrl === '') return;
+    const from = source.getBoundingClientRect();
+    const to = target.getBoundingClientRect();
+    const el = document.createElement('img');
+    el.src = imageUrl;
+    el.alt = '';
+    el.setAttribute('aria-hidden', 'true');
+    el.dataset.flying = '';
+    el.style.cssText = [
+      'position:fixed',
+      `left:${from.left + from.width / 2 - 32}px`,
+      `top:${from.top + from.height / 2 - 32}px`,
+      'width:64px',
+      'height:64px',
+      'object-fit:cover',
+      'border-radius:2px',
+      'box-shadow:0 12px 30px -12px rgba(17,17,16,0.45)',
+      'pointer-events:none',
+      'z-index:60',
+    ].join(';');
+    document.body.append(el);
+    const dx = to.left + to.width / 2 - (from.left + from.width / 2);
+    const dy = to.top + to.height / 2 - (from.top + from.height / 2);
+    const flight = el.animate(
+      [
+        { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+        { transform: `translate(${dx * 0.55}px, ${dy * 0.45 - 40}px) scale(0.72)`, opacity: 1, offset: 0.55 },
+        { transform: `translate(${dx}px, ${dy}px) scale(0.14)`, opacity: 0.4 },
+      ],
+      { duration: 620, easing: 'cubic-bezier(0.3, 0, 0.2, 1)' }
+    );
+    flight.onfinish = () => el.remove();
+    window.setTimeout(() => el.remove(), 900);
+  };
+
   /* Opening and closing come with their manners: scroll lock, focus in and
      out. The effect reads only `open`, so the stores never loop. */
   $effect(() => {
@@ -74,7 +112,14 @@
         recentKey = key;
         if (recentTimer) clearTimeout(recentTimer);
         recentTimer = setTimeout(() => (recentKey = null), 900);
-        cart.show();
+
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!reduced && !cart.open) {
+          flyToCart(button, data.productImage ?? '');
+          setTimeout(() => cart.show(), 420);
+        } else {
+          cart.show();
+        }
       },
       { signal }
     );
@@ -265,7 +310,7 @@
 
         <a
           href={url('/checkout')}
-          class="inline-flex min-h-11 items-center justify-center bg-ink px-4 text-sm text-exhibit transition-colors hover:bg-ink/90"
+          class="inline-flex min-h-11 items-center justify-center bg-ink px-4 text-sm text-exhibit transition-colors hover:bg-ink/90 active:scale-[0.99]"
         >
           إتمام الشراء
         </a>
