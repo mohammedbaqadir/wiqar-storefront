@@ -77,7 +77,7 @@ carries it.
 
 ## Brand Commitments
 
-- The wordmark: وقار as drawn outlines (Naseeb letterforms; the ق's two dots are the mark's
+- The wordmark: وقار as drawn outlines (Reem Kufi letterforms; the ق's two dots are the mark's
   lozenges). Arabic only — no Latin wordmark in the interface; WIỌAR remains only as the
   Latin name in the copyright line.
 - The mark: the piece on its plinth — a brass lozenge floating over a hairline rule. It is the
