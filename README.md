@@ -10,7 +10,7 @@ Arabic-first (RTL), statically built with Astro.
 - **Astro** (static output) + **TypeScript**; **Bun** for install, build and run
 - **Svelte 5** islands for the interactive parts; **Tailwind CSS v4** + **Starwind UI** for the rest
 - Self-hosted Arabic typefaces: Naseeb, Reem Kufi, Amiri, IBM Plex Arabic / Mono
-- Two worlds (day room, night gallery), View Transitions for page motion, `@astrojs/sitemap`
+- Two worlds (day room default, night room by choice), View Transitions for page motion, `@astrojs/sitemap`
 
 ## Structure
 

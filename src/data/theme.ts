@@ -5,8 +5,8 @@
  * Two worlds, one shop. Day is the warm greige room — the original, kept as it
  * was. Night is the blue hour — the same room at dusk: a mid slate ground,
  * bone ink and brass lamplight, photographs still the brightest thing in the
- * shop. Visitors get the world their system prefers and can switch with the
- * lamp in the footer.
+ * shop. The light day is the default; the lamp in the footer opens the night
+ * for the visitors who prefer it.
  *
  * Roles:
  *   room*     — the ground: page, quiet strips, the service bar

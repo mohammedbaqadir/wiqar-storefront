@@ -90,26 +90,35 @@ const linkClass =
 
 <script is:inline>
   (function () {
-    var button = document.querySelector('[data-world-toggle]');
-    if (!button) return;
+    /* Re-runs after every navigation (astro:page-load) — the swapped-in button
+       is a new element, so each one gets its own binding; the marker keeps the
+       initial load and the first astro:page-load from double-binding. */
+    var init = function () {
+      var button = document.querySelector('[data-world-toggle]');
+      if (!button || button.dataset.wqBound) return;
+      button.dataset.wqBound = 'true';
 
-    var label = button.querySelector('[data-world-label]');
-    var paint = function () {
-      var night = document.documentElement.dataset.world === 'night';
-      if (label) label.textContent = night ? 'النهار' : 'الليل';
-      button.setAttribute('aria-pressed', String(night));
+      var label = button.querySelector('[data-world-label]');
+      var paint = function () {
+        var night = document.documentElement.dataset.world === 'night';
+        if (label) label.textContent = night ? 'النهار' : 'الليل';
+        button.setAttribute('aria-pressed', String(night));
+      };
+
+      paint();
+      button.addEventListener('click', function () {
+        var next = document.documentElement.dataset.world === 'night' ? 'day' : 'night';
+        document.documentElement.dataset.world = next;
+        try {
+          localStorage.setItem('wq-world', next);
+        } catch (error) {
+          /* private mode: the choice simply does not persist */
+        }
+        paint();
+      });
     };
 
-    paint();
-    button.addEventListener('click', function () {
-      var next = document.documentElement.dataset.world === 'night' ? 'day' : 'night';
-      document.documentElement.dataset.world = next;
-      try {
-        localStorage.setItem('wq-world', next);
-      } catch (error) {
-        /* private mode: the choice simply does not persist */
-      }
-      paint();
-    });
+    init();
+    document.addEventListener('astro:page-load', init);
   })();
 </script>

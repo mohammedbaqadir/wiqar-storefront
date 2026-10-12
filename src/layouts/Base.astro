@@ -36,21 +36,24 @@ const shareImage = image ? new URL(image, Astro.site) : undefined;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script is:inline>
-      /* The world is chosen before first paint: a saved choice, else the system. */
+      /* The world: light by default; the lamp in the footer is the only door into
+         the night. The choice is re-stamped onto every incoming document before
+         the swap, because client-side navigation syncs <html> attributes — without
+         this, the night would fall off on the first link a visitor clicks. */
       (function () {
-        var saved = null;
-        try {
-          saved = localStorage.getItem('wq-world');
-        } catch (error) {
-          /* private mode: fall through to the system setting */
-        }
-        var dark = window.matchMedia('(prefers-color-scheme: dark)');
-        document.documentElement.dataset.world = saved ? saved : dark.matches ? 'night' : 'day';
-        if (!saved && dark.addEventListener) {
-          dark.addEventListener('change', function (event) {
-            document.documentElement.dataset.world = event.matches ? 'night' : 'day';
-          });
-        }
+        var read = function () {
+          var saved = null;
+          try {
+            saved = localStorage.getItem('wq-world');
+          } catch (error) {
+            /* private mode: the light default holds */
+          }
+          return saved === 'night' ? 'night' : 'day';
+        };
+        document.documentElement.dataset.world = read();
+        document.addEventListener('astro:before-swap', function (event) {
+          event.newDocument.documentElement.dataset.world = read();
+        });
       })();
     </script>
     <title>{title}</title>
