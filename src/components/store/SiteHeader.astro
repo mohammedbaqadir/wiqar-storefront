@@ -58,6 +58,7 @@ import { url } from '@/lib/url';
         <input
           type="search"
           name="q"
+          data-search-trigger
           autocomplete="off"
           placeholder="ابحث"
           aria-label="ابحث في المتجر"
@@ -67,6 +68,7 @@ import { url } from '@/lib/url';
 
       <a
         href={url('/search')}
+        data-search-trigger
         class="inline-flex min-h-11 min-w-11 items-center justify-center text-room-ink-2 transition-colors hover:text-room-ink sm:hidden"
         aria-label="البحث"
       >

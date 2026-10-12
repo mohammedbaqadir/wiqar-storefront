@@ -136,10 +136,14 @@ export default {
     }));
     const categoryIdByName = new Map(categoryList.map((category) => [category.name, category.id]));
 
-    return Response.json({
-      categories: categoryList,
-      products: products.results.map((row) => toProduct(row, categoryIdByName, url.origin)),
-    });
+    return Response.json(
+      {
+        categories: categoryList,
+        products: products.results.map((row) => toProduct(row, categoryIdByName, url.origin)),
+      },
+      /* Public catalogue; the dev search overlay reads it from another origin. */
+      { headers: { 'access-control-allow-origin': '*' } }
+    );
   },
 
   /* Every ten minutes: did a sale window open or close since the last tick?

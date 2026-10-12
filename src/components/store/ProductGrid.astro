@@ -21,7 +21,7 @@ interface Props {
 
 const { products, title, indexed = false } = Astro.props;
 
-const categories = indexed ? await getCategories() : [];
+const categories = await getCategories();
 const categoryOf = (id: number) => categories.find((category) => category.id === id);
 /** Cards sit under the grid's h2 when there is one; otherwise they are the page's h2s. */
 const CardHeading = title ? 'h3' : 'h2';
@@ -50,7 +50,7 @@ const CardHeading = title ? 'h3' : 'h2';
             data-product-card=""
             data-price={product.price}
             data-created={product.created_at}
-            data-category={indexed ? (category?.slug ?? '') : undefined}
+            data-category={category?.slug ?? ''}
             data-search={
               indexed
                 ? searchText(

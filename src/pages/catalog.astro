@@ -2,12 +2,23 @@
 import Base from '@/layouts/Base.astro';
 import SiteHeader from '@/components/store/SiteHeader.astro';
 import SiteFooter from '@/components/store/SiteFooter.astro';
-import CategoryNav from '@/components/store/CategoryNav.astro';
 import ProductGrid from '@/components/store/ProductGrid.astro';
-import { getProducts } from '@/lib/catalog';
+import { getCategories, getProducts } from '@/lib/catalog';
 import { toArabicDigits } from '@/lib/format';
+import { url } from '@/lib/url';
 
 const products = await getProducts();
+const categories = await getCategories();
+const counts = new Map(
+  categories.map((category) => [
+    category.id,
+    products.filter((product) => product.category_id === category.id).length,
+  ])
+);
+const shownCategories = categories.filter((category) => (counts.get(category.id) ?? 0) > 0);
+
+const chipClass =
+  'inline-flex min-h-11 items-center gap-2 border border-hairline px-3.5 text-sm text-room-ink-2 transition-colors hover:border-outline hover:text-room-ink aria-pressed:border-outline aria-pressed:bg-exhibit aria-pressed:text-room-ink';
 
 const sorts = [
   { id: 'newest', label: 'الأحدث' },
@@ -31,66 +42,178 @@ const sorts = [
           </p>
         </div>
 
-        <CategoryNav />
+        {/* الأقسام: تصفية فورية في المكان، والروابط تبقى صالحة بدون جافاسكربت. */}
+        <div class="flex flex-wrap gap-2" aria-label="الأقسام">
+          <a href={url('/catalog')} data-cat="" aria-pressed="true" class={chipClass}>
+            الكل
+            <span class="font-data text-[0.75rem] text-room-ink-3" dir="ltr">
+              {toArabicDigits(products.length)}
+            </span>
+          </a>
+          {
+            shownCategories.map((category) => (
+              <a
+                href={url(`/category/${category.slug}`)}
+                data-cat={category.slug}
+                aria-pressed="false"
+                class={chipClass}
+              >
+                {category.name}
+                <span class="font-data text-[0.75rem] text-room-ink-3" dir="ltr">
+                  {toArabicDigits(counts.get(category.id) ?? 0)}
+                </span>
+              </a>
+            ))
+          }
+        </div>
 
         <div class="flex flex-wrap items-center gap-2">
-          <span class="text-[0.7rem] tracking-[0.12em] text-room-ink-3">الترتيب</span>
+          <span class="text-[0.7rem] tracking-[0.12em] text-room-ink-3">السعر</span>
+          <button type="button" data-price="" aria-pressed="true" class={chipClass}>أي سعر</button>
+          <button type="button" data-price="0-200" aria-pressed="false" class={chipClass}>أقل من ٢٠٠</button>
+          <button type="button" data-price="200-400" aria-pressed="false" class={chipClass}>٢٠٠ – ٤٠٠</button>
+          <button type="button" data-price="400-" aria-pressed="false" class={chipClass}>أكثر من ٤٠٠</button>
+
+          <span class="ms-auto text-[0.7rem] tracking-[0.12em] text-room-ink-3">الترتيب</span>
           {
             sorts.map((sort) => (
-              <button
-                type="button"
-                data-sort={sort.id}
-                aria-pressed="false"
-                class="inline-flex min-h-11 items-center border border-hairline px-3.5 text-sm text-room-ink-2 transition-colors hover:border-outline hover:text-room-ink aria-pressed:border-outline aria-pressed:bg-exhibit aria-pressed:text-room-ink"
-              >
+              <button type="button" data-sort={sort.id} aria-pressed="false" class={chipClass}>
                 {sort.label}
               </button>
             ))
           }
         </div>
+
+        <div class="flex items-center justify-between gap-3">
+          <p data-result-count class="font-data text-[0.8rem] text-room-ink-2">
+            {toArabicDigits(products.length)} قطعة
+          </p>
+          <button
+            type="button"
+            data-clear-filters
+            hidden
+            class="text-[0.75rem] tracking-[0.02em] text-accent-d underline-offset-4 hover:underline"
+          >
+            مسح المرشّحات
+          </button>
+        </div>
       </div>
     </header>
 
     <ProductGrid products={products} />
+
+    <div data-filter-empty hidden class="mx-auto max-w-6xl px-5 pb-16 text-center lg:px-8">
+      <p class="font-display text-2xl text-room-ink">لا قطع بهذه المرشّحات</p>
+      <p class="mx-auto mt-3 max-w-md font-reading text-base leading-loose text-room-ink-2">
+        جرّب تخفيف المرشّحات أو تصفّح الكل.
+      </p>
+    </div>
   </main>
 
   <SiteFooter />
 </Base>
 
 <script>
-  const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-product-card]'));
-  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-sort]'));
+  import { toArabicDigits } from '@/lib/format';
 
-  if (cards.length > 0 && buttons.length > 0) {
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-product-card]'));
+  const catChips = Array.from(document.querySelectorAll<HTMLElement>('[data-cat]'));
+  const priceChips = Array.from(document.querySelectorAll<HTMLElement>('[data-price]'));
+  const sortButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-sort]'));
+  const countEl = document.querySelector<HTMLElement>('[data-result-count]');
+  const emptyEl = document.querySelector<HTMLElement>('[data-filter-empty]');
+  const clearEl = document.querySelector<HTMLButtonElement>('[data-clear-filters]');
+
+  if (cards.length > 0) {
+    const params = new URLSearchParams(location.search);
+    let cat = params.get('cat') ?? '';
+    let price = params.get('price') ?? '';
+    let sort = params.get('sort') ?? 'newest';
+
     const priceOf = (card: HTMLElement) => Number(card.dataset.price ?? 0);
     const dateOf = (card: HTMLElement) => card.dataset.created ?? '';
+    const categoryOf = (card: HTMLElement) => card.dataset.category ?? '';
 
-    const apply = (sort: string) => {
+    const priceMatches = (value: number): boolean => {
+      if (price === '') return true;
+      const [low, high] = price.split('-');
+      const min = low ? Number(low) : 0;
+      const max = high ? Number(high) : Infinity;
+      return value >= min && value < max;
+    };
+
+    const apply = () => {
       const sorted = [...cards].sort((a, b) => {
         if (sort === 'price-asc') return priceOf(a) - priceOf(b);
         if (sort === 'price-desc') return priceOf(b) - priceOf(a);
         return dateOf(b).localeCompare(dateOf(a));
       });
 
-      /* The grid reorders on `order`, so nothing is rebuilt. */
+      /* The grid reorders on `order` and hides by `display`, so nothing is rebuilt. */
+      let shown = 0;
       sorted.forEach((card, index) => {
-        card.style.order = String(index);
+        const matches = (cat === '' || categoryOf(card) === cat) && priceMatches(priceOf(card));
+        card.style.display = matches ? '' : 'none';
+        card.style.order = matches ? String(index) : '';
+        if (matches) shown += 1;
       });
 
-      buttons.forEach((button) =>
-        button.setAttribute('aria-pressed', String(button.dataset.sort === sort))
+      catChips.forEach((chip) =>
+        chip.setAttribute('aria-pressed', String((chip.dataset.cat ?? '') === cat))
+      );
+      priceChips.forEach((chip) =>
+        chip.setAttribute('aria-pressed', String((chip.dataset.price ?? '') === price))
+      );
+      sortButtons.forEach((button) =>
+        button.setAttribute('aria-pressed', String((button.dataset.sort ?? 'newest') === sort))
       );
 
+      if (countEl) {
+        countEl.textContent =
+          shown === cards.length
+            ? `${toArabicDigits(cards.length)} قطعة`
+            : `يعرض ${toArabicDigits(shown)} من ${toArabicDigits(cards.length)}`;
+      }
+      if (emptyEl) emptyEl.hidden = shown !== 0;
+      if (clearEl) clearEl.hidden = cat === '' && price === '';
+
+      /* Keep the address shareable while filtering. */
       const next = new URL(location.href);
-      if (sort === 'newest') next.searchParams.delete('sort');
-      else next.searchParams.set('sort', sort);
+      const setOrDrop = (key: string, value: string) => {
+        if (value === '') next.searchParams.delete(key);
+        else next.searchParams.set(key, value);
+      };
+      setOrDrop('cat', cat);
+      setOrDrop('price', price);
+      setOrDrop('sort', sort === 'newest' ? '' : sort);
       history.replaceState(null, '', next);
     };
 
-    buttons.forEach((button) =>
-      button.addEventListener('click', () => apply(button.dataset.sort ?? 'newest'))
+    catChips.forEach((chip) =>
+      chip.addEventListener('click', (event) => {
+        event.preventDefault();
+        cat = chip.dataset.cat ?? '';
+        apply();
+      })
     );
+    priceChips.forEach((chip) =>
+      chip.addEventListener('click', () => {
+        price = chip.dataset.price ?? '';
+        apply();
+      })
+    );
+    sortButtons.forEach((button) =>
+      button.addEventListener('click', () => {
+        sort = button.dataset.sort ?? 'newest';
+        apply();
+      })
+    );
+    clearEl?.addEventListener('click', () => {
+      cat = '';
+      price = '';
+      apply();
+    });
 
-    apply(new URLSearchParams(location.search).get('sort') ?? 'newest');
+    apply();
   }
 </script>

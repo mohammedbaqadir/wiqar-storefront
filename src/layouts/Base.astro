@@ -3,6 +3,7 @@ import '@/styles/starwind.css';
 import '@/styles/world.css';
 import { ClientRouter } from 'astro:transitions';
 import CartDrawer from '@/components/store/CartDrawer.svelte';
+import SearchOverlay from '@/components/store/SearchOverlay.svelte';
 import { dayMaterials, nightMaterials, themeVars } from '@/data/theme';
 import { url } from '@/lib/url';
 
@@ -87,6 +88,7 @@ const shareImage = image ? new URL(image, Astro.site) : undefined;
 
     <slot />
     <CartDrawer client:load />
+    <SearchOverlay client:load />
 
     <script is:inline>
       (function () {
