@@ -114,7 +114,7 @@
             src={product.image.url}
             alt={product.image.alt}
             loading={index === 0 ? 'eager' : 'lazy'}
-            fetchpriority={index === 0 ? 'high' : undefined}
+            fetchpriority={index === 0 ? 'high' : 'low'}
             class="absolute inset-0 size-full object-cover"
           />
         </div>
