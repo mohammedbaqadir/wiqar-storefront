@@ -82,7 +82,9 @@
   --color-secondary-accent: var(--secondary-accent);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
+  /* --color-accent is deliberately NOT re-pointed here: the world block above is
+     the law — accent means brass. Re-declaring it with a surface tone shadowed
+     the brass silently and made the progress fill match its own track. */
   --color-accent-foreground: var(--accent-foreground);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);

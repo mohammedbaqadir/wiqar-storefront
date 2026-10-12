@@ -11,6 +11,7 @@
  * day's local end), or an ISO instant. When the window ends the regular
  * price is back — nothing to clean up. --dry-run prints the SQL only.
  */
+/// <reference types="bun" />
 import { parseArgs } from 'node:util';
 import { dirname } from 'node:path';
 
@@ -89,27 +90,28 @@ const readInstant = (value: string): string => {
 
 /* ── modes ───────────────────────────────────────────────── */
 
-let parsed;
-try {
-  parsed = parseArgs({
-    args: process.argv.slice(2),
-    options: {
-      sale: { type: 'string' },
-      'end-sale': { type: 'string' },
-      sales: { type: 'boolean' },
-      ping: { type: 'boolean' },
-      now: { type: 'string' },
-      off: { type: 'string' },
-      until: { type: 'string' },
-      from: { type: 'string' },
-      'dry-run': { type: 'boolean' },
-    },
-    strict: true,
-  });
-} catch (error) {
-  fail(String((error as Error).message));
-}
-const { values } = parsed;
+const parse = () => {
+  try {
+    return parseArgs({
+      args: process.argv.slice(2),
+      options: {
+        sale: { type: 'string' },
+        'end-sale': { type: 'string' },
+        sales: { type: 'boolean' },
+        ping: { type: 'boolean' },
+        now: { type: 'string' },
+        off: { type: 'string' },
+        until: { type: 'string' },
+        from: { type: 'string' },
+        'dry-run': { type: 'boolean' },
+      },
+      strict: true,
+    });
+  } catch (error) {
+    return fail(String((error as Error).message));
+  }
+};
+const { values } = parse();
 
 if (!process.env.CLOUDFLARE_ACCOUNT_ID) {
   fail('CLOUDFLARE_ACCOUNT_ID is not set — add it to the repo .env');

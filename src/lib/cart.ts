@@ -93,7 +93,7 @@ const isLine = (value: unknown): value is CartLineInput & { quantity: number } =
 };
 
 /** Keeps a quantity sane: at least one, never past the shelf. */
-export const clampQuantity = (quantity: number, max: number | null): number => {
+const clampQuantity = (quantity: number, max: number | null): number => {
   const whole = Math.max(1, Math.floor(quantity) || 1);
   return max === null ? whole : Math.min(whole, Math.max(1, max));
 };
@@ -152,8 +152,6 @@ export const setQuantity = (key: string, quantity: number): CartLine[] =>
 
 export const removeLine = (key: string): CartLine[] =>
   writeCart(readCart().filter((line) => line.key !== key));
-
-export const clearCart = (): CartLine[] => writeCart([]);
 
 export const totals = (lines: CartLine[]): CartTotals => {
   const count = lines.reduce((sum, line) => sum + line.quantity, 0);

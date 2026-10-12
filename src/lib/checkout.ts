@@ -30,7 +30,7 @@ export interface CheckoutLine {
 }
 
 /** Flat rate under the free-shipping threshold. The real rate arrives at Salla's checkout. */
-export const SHIPPING_FLAT = 25;
+const SHIPPING_FLAT = 25;
 
 /** What shipping costs on a given basket. */
 export const shippingFor = (subtotal: number): number =>
