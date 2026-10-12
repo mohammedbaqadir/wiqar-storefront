@@ -57,8 +57,9 @@ carries it.
 - Two worlds, one shop: the light greige room by day and the olive night gallery, chosen by
   the visitor's system preference and switchable with the lamp in the footer. At night each
   photograph sits in its own pool of light; by day it rests on a lit plinth.
-- Cart and the product buy box are Svelte 5 islands; search, sorting and the gallery stay
-  plain TypeScript. Choice values in the data can carry their own stock and price.
+- Cart, the buy box (with its floating bar), and the search overlay are Svelte 5 islands;
+  sorting, filtering and the gallery stay plain TypeScript. Choice values in the data can
+  carry their own stock and price.
 - Sales live in the data (`sale_price` plus a window). The crossed price, the badge and the
   countdown appear only when the data is there, and the regular price returns when the window
   ends.

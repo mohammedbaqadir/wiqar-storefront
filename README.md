@@ -36,8 +36,9 @@ through `bun run sale` (or the D1 console) and ping the deploy hook, which rebui
 a cron on the Worker rebuilds when a sale window opens or closes. Schema changes are versioned in
 `migrations/`; the operations guide is `DATA.md`.
 
-The cart drawer, header count and the product buy box (options, live price/stock, countdown) are
-Svelte 5 islands; search suggestions, sorting and the gallery stay small plain-TypeScript scripts.
+The cart drawer, the header's cart button, the buy box (with its floating bar), and the search
+overlay are Svelte 5 islands; sorting, catalogue filtering, the search page and the gallery stay
+small plain-TypeScript scripts.
 
 ## How a purchase leaves the shop
 
