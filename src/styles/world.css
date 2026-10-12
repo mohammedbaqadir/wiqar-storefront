@@ -52,6 +52,32 @@
   background-color: var(--wq-room-2);
 }
 
+/* One focus voice across the shop: champagne, never the browser's blue.
+   :where keeps zero specificity, so crafted rings still win where they exist. */
+:where(:focus-visible) {
+  outline: 2px solid var(--wq-accent-d);
+  outline-offset: 2px;
+}
+
+/* Bare fields sit inside a wrapper that carries the ring already. */
+:where(.wq-field-bare:focus-visible) {
+  outline: none;
+}
+
+/* Selecting text is the shop's light, with a soft glow — never the toolbar blue. */
+::selection {
+  background-color: color-mix(in oklab, var(--wq-accent) 30%, transparent);
+  text-shadow: 0 0 12px color-mix(in oklab, var(--wq-accent-l) 60%, transparent);
+}
+
+:root {
+  accent-color: var(--wq-accent);
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
 @layer base {
   html {
     color-scheme: light;

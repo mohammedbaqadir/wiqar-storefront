@@ -250,7 +250,13 @@
       { signal }
     );
 
-    return () => controller.abort();
+    /* Warm the catalogue while the page idles — by the first click it is ready. */
+    const warm = window.setTimeout(() => void load(), 1500);
+
+    return () => {
+      controller.abort();
+      window.clearTimeout(warm);
+    };
   });
 </script>
 

@@ -142,7 +142,12 @@ export default {
         products: products.results.map((row) => toProduct(row, categoryIdByName, url.origin)),
       },
       /* Public catalogue; the dev search overlay reads it from another origin. */
-      { headers: { 'access-control-allow-origin': '*' } }
+      {
+        headers: {
+          'access-control-allow-origin': '*',
+          'cache-control': 'public, max-age=300',
+        },
+      }
     );
   },
 
