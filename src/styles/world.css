@@ -313,8 +313,9 @@ html[data-filtering] [data-client-filter] {
 
 /* ── the two worlds ───────────────────────────────────────────
    The day is the lit greige room, kept exactly as it was; the
-   night is an unlit olive gallery where light belongs to the
-   pieces. Only the night rules below deviate. */
+   night is the blue hour — the same room at dusk, mid slate
+   with bone ink and brass lamplight. Only the night rules
+   below deviate. */
 html[data-world='night'] {
   color-scheme: dark;
 }
@@ -334,14 +335,14 @@ html[data-world='night'] body::after {
 
 html[data-world='night'] .wq-mount {
   background-color: transparent;
-  background-image: radial-gradient(85% 62% at 50% 92%, rgba(242, 239, 230, 0.22), transparent 74%);
+  background-image: radial-gradient(85% 62% at 50% 92%, rgba(246, 242, 232, 0.15), transparent 74%);
   padding: 0.9rem 0.9rem 1.7rem;
 }
 
 /* ── the hero veil ──────────────────────────────────────────
    One veil over every hero photograph, so even the lightest
-   image carries light text — heavier at night, where the room
-   is dim and a white photo would glare. */
+   image carries light text — heavier at night, where a bright
+   photograph should not glare against the dusk. */
 .wq-hero-scrim {
   background: linear-gradient(
     to top,
@@ -366,6 +367,12 @@ html[data-world='night'] .wq-hero-scrim {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     row-gap: 3rem;
   }
+}
+
+/* The scarcity tag (product page): at night its ember fill is light, so the
+   label flips to dark ink — a label, not a glow. */
+html[data-world='night'] .bg-signal {
+  color: var(--wq-scrim);
 }
 
 /* Prices are set in the reading face: printed numerals, not UI digits. */

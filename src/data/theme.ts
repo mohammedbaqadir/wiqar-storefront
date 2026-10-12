@@ -3,9 +3,10 @@
  * one source of truth.
  *
  * Two worlds, one shop. Day is the warm greige room — the original, kept as it
- * was. Night is a cool olive gallery (chosen in the lighting tests) where each
- * photograph sits in its own pool of light. Visitors get the world their
- * system prefers and can switch with the lamp in the footer.
+ * was. Night is the blue hour — the same room at dusk: a mid slate ground,
+ * bone ink and brass lamplight, photographs still the brightest thing in the
+ * shop. Visitors get the world their system prefers and can switch with the
+ * lamp in the footer.
  *
  * Roles:
  *   room*     — the ground: page, quiet strips, the service bar
@@ -70,29 +71,29 @@ export const dayMaterials: Materials = {
   onPhoto: '#f7f5ef',
 };
 
-/** Night — the olive gallery, tuned in the lighting tests (#1a1e1b). */
+/** Night — the blue hour: mid slate ground, bone ink, brass lamplight (#4c5668). */
 export const nightMaterials: Materials = {
-  room: '#1a1e1b',
-  room2: '#161a17',
-  room3: '#3a403a',
-  exhibit: '#20241f',
-  exhibit2: '#1f231e',
-  ink: '#f2efe6',
-  ink2: '#c7c2b4',
-  ink3: '#a6a194',
-  roomInk: '#f2efe6',
-  roomInk2: '#c7c2b4',
-  roomInk3: '#a6a194',
-  deep: '#121512',
-  deepInk: '#f2efe6',
-  deepInk2: '#c0bbae',
-  accent: '#b08d57',
-  accentD: '#c9a97a',
-  accentL: '#dcc39a',
-  signal: '#d0664d',
-  hairline: 'rgba(242, 239, 230, 0.16)',
-  hairlineInk: 'rgba(242, 239, 230, 0.2)',
-  scrim: '#0c0e0c',
+  room: '#4c5668',
+  room2: '#454f61',
+  room3: '#6b7586',
+  exhibit: '#576173',
+  exhibit2: '#505a6c',
+  ink: '#f8f4ea',
+  ink2: '#e8e0ce',
+  ink3: '#e3dbc6',
+  roomInk: '#f8f4ea',
+  roomInk2: '#e8e0ce',
+  roomInk3: '#e3dbc6',
+  deep: '#3b4554',
+  deepInk: '#f8f4ea',
+  deepInk2: '#d9d2c0',
+  accent: '#c9a670',
+  accentD: '#e0bd84',
+  accentL: '#ecd3a2',
+  signal: '#f9bfa6',
+  hairline: 'rgba(246, 242, 232, 0.2)',
+  hairlineInk: 'rgba(246, 242, 232, 0.26)',
+  scrim: '#333a45',
   onPhoto: '#f7f5ef',
 };
 
