@@ -45,6 +45,9 @@
   let panelEl = $state<HTMLElement | undefined>(undefined);
   let lastFocused: HTMLElement | null = null;
   let closing = false;
+  let overlayEl = $state<HTMLElement | undefined>(undefined);
+  /** The element the overlay morphs out of — the field or icon just used. */
+  let morphSource: HTMLElement | null = null;
 
   const results = $derived.by(() => {
     const q = query.trim();
@@ -133,7 +136,32 @@
     query = seed;
     active = -1;
     rememberRead();
-    open = true;
+
+    /* The field becomes the panel: one native morph, then the names go back. */
+    const doc = document as Document & {
+      startViewTransition?: (callback: () => void) => { finished: Promise<void> };
+    };
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const source = morphSource;
+    morphSource = null;
+
+    if (!reduce && doc.startViewTransition && source) {
+      source.style.setProperty('view-transition-name', 'wq-search');
+      const transition = doc.startViewTransition(() => {
+        /* The veil must arrive in one beat for the snapshot to see the panel. */
+        overlayEl?.style.setProperty('transition', 'none');
+        open = true;
+        source.style.removeProperty('view-transition-name');
+        panelEl?.style.setProperty('view-transition-name', 'wq-search');
+      });
+      void transition.finished.finally(() => {
+        overlayEl?.style.removeProperty('transition');
+        panelEl?.style.removeProperty('view-transition-name');
+      });
+    } else {
+      open = true;
+    }
+
     void load();
     queueMicrotask(() => inputEl?.focus());
   };
@@ -203,6 +231,11 @@
     const controller = new AbortController();
     const { signal } = controller;
 
+    const firstVisibleTrigger = () =>
+      Array.from(document.querySelectorAll<HTMLElement>('[data-search-trigger]')).find(
+        (element) => element.offsetParent !== null
+      ) ?? null;
+
     /* Only the newest island keeps document listeners — the drawer's handover. */
     const handover = (window as unknown as { __wqSearchHandover?: () => void }).__wqSearchHandover;
     handover?.();
@@ -216,6 +249,7 @@
         const trigger = target?.closest?.('[data-search-trigger]');
         if (!trigger) return;
         event.preventDefault();
+        morphSource = trigger as HTMLElement;
         show();
       },
       { signal }
@@ -229,6 +263,7 @@
         if (!(target instanceof HTMLInputElement) || !target.matches('[data-search-trigger]')) return;
         const seed = target.value;
         target.value = '';
+        morphSource = target;
         show(seed);
       },
       { signal }
@@ -243,6 +278,7 @@
         }
         if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {
           event.preventDefault();
+          morphSource = firstVisibleTrigger();
           show();
           return;
         }
@@ -253,6 +289,7 @@
             : false;
           if (!typing) {
             event.preventDefault();
+            morphSource = firstVisibleTrigger();
             show();
           }
         }
@@ -272,6 +309,7 @@
 
 <div
   data-search-overlay
+  bind:this={overlayEl}
   inert={!open ? true : undefined}
   data-open={open ? '' : undefined}
   class="pointer-events-none fixed inset-0 z-[60] opacity-0 transition-opacity duration-200 data-[open]:pointer-events-auto data-[open]:opacity-100"
@@ -282,6 +320,7 @@
     bind:this={panelEl}
     role="dialog"
     aria-modal="true"
+    tabindex="-1"
     aria-label="البحث في المتجر"
     onkeydown={onPanelKeydown}
     class="relative mx-auto mt-[9vh] w-[min(92vw,38rem)] border border-hairline-ink bg-exhibit text-ink shadow-[0_28px_70px_-28px_rgba(17,17,16,0.5)]"
@@ -364,7 +403,7 @@
                 <img src={item.thumb} alt="" class="size-11 shrink-0 bg-exhibit-2 object-cover" />
               {/if}
               <span class="min-w-0 flex-1">
-                <span class="block truncate text-sm text-ink">{#each nameParts(item.name) as part, partIndex (partIndex)}{#if partIndex > 0} {/if}{#if part.hit}<mark class="rounded-[2px] bg-accent/20 px-0.5 text-ink">{part.text}</mark>{:else}{part.text}{/if}{/each}</span>
+                <span class="block truncate text-sm text-ink">{#each nameParts(item.name) as part, partIndex (partIndex)}{#if partIndex > 0}&nbsp;{/if}{#if part.hit}<mark class="rounded-[2px] bg-accent/20 px-0.5 text-ink">{part.text}</mark>{:else}{part.text}{/if}{/each}</span>
                 {#if item.category}
                   <span class="block text-[0.7rem] text-ink-3">{item.category}</span>
                 {/if}

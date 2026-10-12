@@ -57,6 +57,7 @@ const CardHeading = title ? 'h3' : 'h2';
           <div
             class="group relative flex flex-col wq-reveal"
             data-product-card=""
+            data-slug={product.slug}
             data-price={product.price}
             data-created={product.created_at}
             data-category={category?.slug ?? ''}

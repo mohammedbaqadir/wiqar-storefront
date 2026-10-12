@@ -115,6 +115,7 @@
             alt={product.image.alt}
             loading={index === 0 ? 'eager' : 'lazy'}
             fetchpriority={index === 0 ? 'high' : 'low'}
+            style:view-transition-name={index === active ? `product-photo-${product.slug}` : undefined}
             class="absolute inset-0 size-full object-cover"
           />
         </div>

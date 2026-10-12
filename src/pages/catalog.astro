@@ -189,29 +189,61 @@ const sorts = [
       history.replaceState(null, '', next);
     };
 
+    /* Filtering glides: the browser's view transitions slide the cards to their
+       new slots while the plain-TS filter does exactly what it always did.
+       No support, or "reduce": the instant snap remains. */
+    const doc = document as Document & {
+      startViewTransition?: (callback: () => void) => { finished: Promise<void> };
+    };
+    let reflowGeneration = 0;
+    const reflow = () => {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!doc.startViewTransition || reduce) {
+        apply();
+        return;
+      }
+      const generation = ++reflowGeneration;
+      const mainEl = document.querySelector<HTMLElement>('main#main');
+      const named: HTMLElement[] = [];
+      cards.forEach((card) => {
+        const slug = card.dataset.slug;
+        if (!slug) return;
+        card.style.viewTransitionName = `wq-card-${slug}`;
+        named.push(card);
+      });
+      /* The column itself stays still while a local reflow glides. */
+      mainEl?.style.setProperty('view-transition-name', 'none');
+      const transition = doc.startViewTransition(() => apply());
+      void transition.finished.finally(() => {
+        if (generation !== reflowGeneration) return;
+        named.forEach((card) => card.style.removeProperty('view-transition-name'));
+        mainEl?.style.removeProperty('view-transition-name');
+      });
+    };
+
     catChips.forEach((chip) =>
       chip.addEventListener('click', (event) => {
         event.preventDefault();
         cat = chip.dataset.cat ?? '';
-        apply();
+        reflow();
       })
     );
     priceChips.forEach((chip) =>
       chip.addEventListener('click', () => {
         price = chip.dataset.price ?? '';
-        apply();
+        reflow();
       })
     );
     sortButtons.forEach((button) =>
       button.addEventListener('click', () => {
         sort = button.dataset.sort ?? 'newest';
-        apply();
+        reflow();
       })
     );
     clearEl?.addEventListener('click', () => {
       cat = '';
       price = '';
-      apply();
+      reflow();
     });
 
     apply();

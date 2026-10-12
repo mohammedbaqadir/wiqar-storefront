@@ -382,10 +382,11 @@ html[data-world='night'] .bg-signal {
 
 /* ── motion ───────────────────────────────────────────────────
    The choreography: pages cross-fade with the main column rising,
-   pieces morph between grid and page, heroes and product stages
-   settle on arrival, and content rises once as it enters the
-   viewport. Every move has a reduced-motion answer: with "reduce"
-   set, the store is completely still. */
+   pieces morph between grid, hero, rail and page, filtering glides
+   the cards to their slots, the search field becomes the panel,
+   heroes and product stages settle on arrival, and content rises
+   once as it enters the viewport. Every move has a reduced-motion
+   answer: with "reduce" set, the store is completely still. */
 
 /* the moving column */
 main#main {
@@ -430,11 +431,12 @@ main#main {
   .wq-d4 { animation-delay: 360ms; }
 }
 
+/* With "reduce" set, no view-transition moves — every named group,
+   present and future, sits still. */
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root),
-  ::view-transition-old(main),
-  ::view-transition-new(main) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
     animation: none;
   }
 }
