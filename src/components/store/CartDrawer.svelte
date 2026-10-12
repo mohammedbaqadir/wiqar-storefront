@@ -222,7 +222,7 @@
         <p class="text-sm leading-relaxed text-ink-2">لم تُضف أي قطعة بعد.</p>
         <a
           href={url('/catalog')}
-          class="mt-2 inline-flex min-h-11 items-center border border-hairline-ink px-4 text-sm text-ink transition-colors hover:bg-exhibit-2"
+          class="mt-2 inline-flex min-h-11 items-center border border-hairline-ink px-4 text-sm text-ink transition-colors hover:bg-room-2"
         >
           تصفّح المتجر
         </a>
@@ -265,7 +265,7 @@
                     aria-label="زيادة الكمية"
                     onclick={() => cart.setQuantity(line.key, line.quantity + 1)}
                     disabled={line.max !== null && line.quantity >= line.max}
-                    class="size-11 text-ink transition-colors hover:bg-exhibit-2 disabled:opacity-35"
+                    class="size-11 text-ink transition-colors hover:bg-room-2 disabled:opacity-35"
                   >
                     +
                   </button>
@@ -276,7 +276,7 @@
                     type="button"
                     aria-label="إنقاص الكمية"
                     onclick={() => cart.setQuantity(line.key, line.quantity - 1)}
-                    class="size-11 text-ink transition-colors hover:bg-exhibit-2"
+                    class="size-11 text-ink transition-colors hover:bg-room-2"
                   >
                     −
                   </button>
@@ -318,7 +318,7 @@
         <button
           type="button"
           onclick={cart.hide}
-          class="min-h-11 border border-hairline-ink px-4 text-sm text-ink transition-colors hover:bg-exhibit-2"
+          class="min-h-11 border border-hairline-ink px-4 text-sm text-ink transition-colors hover:bg-room-2"
         >
           متابعة التسوّق
         </button>

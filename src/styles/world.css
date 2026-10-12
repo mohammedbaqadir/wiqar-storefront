@@ -40,6 +40,18 @@
   --radius: 4px;
 }
 
+/* Keyboard highlight for listbox options — must read in both worlds
+   (exhibit-2 is nearly exhibit in the night palette). */
+[role='option'] {
+  border-inline-start: 3px solid transparent;
+  transition: background-color 150ms ease;
+}
+
+[role='option'][aria-selected='true'] {
+  border-inline-start-color: var(--wq-accent);
+  background-color: var(--wq-room-2);
+}
+
 @layer base {
   html {
     color-scheme: light;

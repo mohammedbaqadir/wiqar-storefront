@@ -17,6 +17,10 @@ import { FREE_SHIPPING_AT, readCart, totals, type CartLine } from '@/lib/cart';
 const BACKEND_URL =
   import.meta.env.PUBLIC_BACKEND_URL ?? 'https://wiqar-backend.directed-countless.workers.dev';
 
+/* A production build must never aim shoppers at a local or plain-http backend:
+   a stale build variable should fail honestly, not navigate into the void. */
+const backendUsable = import.meta.env.DEV || BACKEND_URL.startsWith('https://');
+
 /** A line as the checkout backend wants it: sku, count, chosen options. */
 export interface CheckoutLine {
   identifier_type: 'sku';
@@ -72,6 +76,7 @@ interface Envelope {
  * Salla's page.
  */
 export const beginCheckout = async (order: CheckoutOrder = buildOrder()): Promise<CheckoutResult> => {
+  if (!backendUsable) return { status: 'unconfigured' };
   if (order.lines.length === 0) return { status: 'failed', reason: 'empty' };
   if (order.lines.some((line) => line.identifier === '')) {
     return { status: 'failed', reason: 'missing-sku' };
@@ -79,7 +84,10 @@ export const beginCheckout = async (order: CheckoutOrder = buildOrder()): Promis
 
   let payload: Envelope | null = null;
   try {
-    const response = await fetch(`${BACKEND_URL}/cart`, { method: 'POST' });
+    const response = await fetch(`${BACKEND_URL}/cart`, {
+      method: 'POST',
+      signal: AbortSignal.timeout(10_000),
+    });
     payload = (await response.json().catch(() => null)) as Envelope | null;
     if (response.status === 503) return { status: 'unconfigured' };
     if (!response.ok) {
@@ -100,6 +108,7 @@ export const beginCheckout = async (order: CheckoutOrder = buildOrder()): Promis
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(line),
+        signal: AbortSignal.timeout(10_000),
       });
       if (!response.ok) {
         const itemPayload = (await response.json().catch(() => null)) as Envelope | null;

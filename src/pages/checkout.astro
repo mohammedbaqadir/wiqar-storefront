@@ -118,9 +118,9 @@ import { url } from '@/lib/url';
       </div>
       <div class="flex items-center justify-between gap-3">
         <div class="flex items-center border border-hairline">
-          <button type="button" data-line-inc aria-label="زيادة الكمية" class="size-11 text-room-ink transition-colors hover:bg-exhibit-2 disabled:opacity-35">+</button>
+          <button type="button" data-line-inc aria-label="زيادة الكمية" class="size-11 text-room-ink transition-colors hover:bg-room-2 disabled:opacity-35">+</button>
           <span data-line-qty class="min-w-8 text-center font-data text-sm text-room-ink"></span>
-          <button type="button" data-line-dec aria-label="إنقاص الكمية" class="size-11 text-room-ink transition-colors hover:bg-exhibit-2">−</button>
+          <button type="button" data-line-dec aria-label="إنقاص الكمية" class="size-11 text-room-ink transition-colors hover:bg-room-2">−</button>
         </div>
         <span data-line-price class="font-data text-sm text-room-ink"></span>
       </div>
@@ -233,6 +233,13 @@ import { url } from '@/lib/url';
         result.status === 'unconfigured'
           ? 'الدفع الآمن لم يُفعَّل بعد، وسلتك محفوظة.'
           : (messages[result.reason] ?? 'تعذّر بدء الدفع. أعد المحاولة بعد قليل.');
+    });
+
+    /* Returning through the back button (bfcache) must leave a live button behind. */
+    window.addEventListener('pageshow', (event) => {
+      if (!event.persisted) return;
+      submit.disabled = false;
+      status.textContent = '';
     });
 
     subscribe(render);

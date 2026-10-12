@@ -319,7 +319,7 @@
                     active = -1;
                     inputEl?.focus();
                   }}
-                  class="min-h-9 border border-hairline-ink px-3 text-sm text-ink-2 transition-colors hover:bg-exhibit-2"
+                  class="min-h-9 border border-hairline-ink px-3 text-sm text-ink-2 transition-colors hover:bg-room-2"
                 >
                   {recent}
                 </button>
@@ -337,13 +337,12 @@
           <li id={`wq-sr-${index}`} role="option" aria-selected={index === active ? 'true' : 'false'}>
             <a
               href={`/product/${item.slug}`}
-              data-active={index === active ? '' : undefined}
               onclick={(event) => {
                 event.preventDefault();
                 pick(item);
               }}
               onmouseenter={() => (active = index)}
-              class="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-exhibit-2 data-[active]:bg-exhibit-2"
+              class="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-room-2"
             >
               {#if item.thumb}
                 <img src={item.thumb} alt="" class="size-11 shrink-0 bg-exhibit-2 object-cover" />
@@ -365,7 +364,7 @@
           event.preventDefault();
           openAllResults();
         }}
-        class="block border-t border-hairline-ink px-5 py-3 text-sm text-ink-2 transition-colors hover:bg-exhibit-2"
+        class="block border-t border-hairline-ink px-5 py-3 text-sm text-ink-2 transition-colors hover:bg-room-2"
       >
         عرض كل النتائج
       </a>

@@ -164,7 +164,7 @@ const products = await getProducts();
           const link = document.createElement('a');
           link.href = entry.card.querySelector('a')?.getAttribute('href') ?? '#';
           link.className =
-            'flex items-center justify-between gap-3 px-4 py-3 text-sm text-ink transition-colors hover:bg-exhibit-2';
+            'flex items-center justify-between gap-3 px-4 py-3 text-sm text-ink transition-colors hover:bg-room-2';
 
           const name = document.createElement('span');
           name.textContent = entry.card.querySelector('h3')?.textContent?.trim() ?? '';
