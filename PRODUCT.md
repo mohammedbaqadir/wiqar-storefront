@@ -78,6 +78,8 @@ carries it.
 ## Brand Commitments
 
 - The name وقار and the Latin wordmark WIỌAR.
+- The mark: the piece on its plinth — a brass lozenge floating over a hairline rule. It is the
+  favicon and sits beside the wordmark in the header and footer.
 - The owner's standard, in the store's own voice: الجودة · الذوق · القيمة.
 - Arabic-first voice: plain, precise, never salesy.
 - **Not binding:** the visual world may evolve. The current one — a warm greige room by day
