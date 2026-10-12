@@ -17,9 +17,11 @@ interface Props {
   title?: string;
   /** Emits the data the client filters on (search and category). */
   indexed?: boolean;
+  /** Small screens: an edge-to-edge snap rail instead of the grid. */
+  rail?: boolean;
 }
 
-const { products, title, indexed = false } = Astro.props;
+const { products, title, indexed = false, rail = false } = Astro.props;
 
 const categories = await getCategories();
 const categoryOf = (id: number) => categories.find((category) => category.id === id);
@@ -36,7 +38,14 @@ const CardHeading = title ? 'h3' : 'h2';
     )
   }
 
-  <div class="grid grid-cols-2 gap-x-4 gap-y-9 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-6 wq-grid">
+  <div
+    class:list={[
+      'wq-grid',
+      rail
+        ? 'wq-rail'
+        : 'grid grid-cols-2 gap-x-4 gap-y-9 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-6',
+    ]}
+  >
     {
       products.map((product) => {
         const category = categoryOf(product.category_id);

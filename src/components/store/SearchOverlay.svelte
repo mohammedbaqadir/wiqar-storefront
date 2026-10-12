@@ -57,6 +57,16 @@
       .map((entry) => entry.item);
   });
 
+  /** The query tokens, marked inside the name — the shop's light again. */
+  const nameParts = (name: string): Array<{ text: string; hit: boolean }> => {
+    const tokens = normalize(query).split(' ').filter(Boolean);
+    if (tokens.length === 0) return [{ text: name, hit: false }];
+    return name.split(' ').map((word) => ({
+      text: word,
+      hit: tokens.some((token) => normalize(word).includes(token)),
+    }));
+  };
+
   const load = async (): Promise<void> => {
     const w = window as unknown as { __wqSearchItems?: SearchItem[] };
     if (w.__wqSearchItems) {
@@ -354,7 +364,7 @@
                 <img src={item.thumb} alt="" class="size-11 shrink-0 bg-exhibit-2 object-cover" />
               {/if}
               <span class="min-w-0 flex-1">
-                <span class="block truncate text-sm text-ink">{item.name}</span>
+                <span class="block truncate text-sm text-ink">{#each nameParts(item.name) as part, partIndex (partIndex)}{#if partIndex > 0} {/if}{#if part.hit}<mark class="rounded-[2px] bg-accent/20 px-0.5 text-ink">{part.text}</mark>{:else}{part.text}{/if}{/each}</span>
                 {#if item.category}
                   <span class="block text-[0.7rem] text-ink-3">{item.category}</span>
                 {/if}

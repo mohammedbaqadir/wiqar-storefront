@@ -78,6 +78,57 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* A related rail: edge-to-edge snap scroll below lg, the usual grid above. */
+.wq-rail {
+  display: flex;
+  gap: 0.75rem;
+  margin-inline: -1.25rem;
+  padding-inline: 1.25rem;
+  padding-bottom: 0.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 20px, black calc(100% - 20px), transparent);
+  mask-image: linear-gradient(90deg, transparent, black 20px, black calc(100% - 20px), transparent);
+}
+
+.wq-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.wq-rail > * {
+  flex: 0 0 74%;
+  scroll-snap-align: start;
+}
+
+@media (min-width: 64rem) {
+  .wq-rail {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 1.5rem;
+    row-gap: 2.25rem;
+    margin-inline: 0;
+    padding-inline: 0;
+    padding-bottom: 0;
+    overflow: visible;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .wq-rail > * {
+    flex: none;
+  }
+}
+
+/* Milk glass for the header, unless transparency is unwelcome. */
+@media (prefers-reduced-transparency: reduce) {
+  .wq-glass {
+    background-color: var(--wq-room);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
 @layer base {
   html {
     color-scheme: light;

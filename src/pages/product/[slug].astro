@@ -41,6 +41,33 @@ const availability = gone
     ? lowStockLabel(product)
     : 'متوفّرة';
 
+/** The quiet facts, folded away until asked for. */
+const details = [
+  {
+    title: 'الشحن والتوصيل',
+    points: [
+      'التوصيل مجاني للطلبات فوق ٥٠٠ ر.س، وما دون ذلك يُحسب عند الدفع.',
+      'نجهّز الطلب خلال يومي عمل، ويصل داخل المملكة عادةً في ٢–٥ أيام.',
+      'الدفع عند الاستلام متاح.',
+    ],
+  },
+  {
+    title: 'الإرجاع والاستبدال',
+    points: [
+      'الإرجاع خلال ١٤ يومًا من الاستلام، بشرط أن تكون القطعة كما وصلت.',
+      'الاستبدال متاح إذا وصلت القطعة مخالفة لوصفها.',
+      'تُعاد قيمة القطعة كاملة، ويتحمّل الطرف الذي أخطأ كلفة الشحن.',
+    ],
+  },
+  {
+    title: 'كيف نختار',
+    points: [
+      'كل قطعة تمرّ بثلاثة أسئلة: هل تُصنع كما ينبغي؟ هل تخدم استعمالًا حقيقيًا؟ وهل يبقى سعرها معقولًا بعد سنوات؟',
+      'ما لا يجتاز الأسئلة الثلاثة لا يُعرض — ولذلك قائمة المتجر قصيرة دائمًا.',
+    ],
+  },
+];
+
 const share = product.image.url;
 const schema = productSchema(product, {
   url: new URL(Astro.url.pathname, Astro.site).href,
@@ -143,7 +170,7 @@ const schema = productSchema(product, {
         }
       </div>
 
-      <div class="space-y-7 wq-in">
+      <div class="space-y-7 wq-in lg:sticky lg:top-24 lg:self-start">
         <div class="space-y-4 border-b border-hairline pb-6">
           <div class="flex flex-wrap items-center gap-3 font-data text-[0.8rem] text-room-ink-3">
             <span dir="ltr">{product.sku}</span>
@@ -178,16 +205,43 @@ const schema = productSchema(product, {
           </div>
         </dl>
 
-        <section class="space-y-3 border-t border-hairline pt-6">
+      </div>
+    </div>
+
+    <section class="mx-auto max-w-6xl px-5 pb-6 lg:px-8">
+      <div class="grid gap-10 border-t border-hairline pt-10 lg:grid-cols-2 lg:gap-14">
+        <div class="space-y-3">
           <h2 class="font-data text-[0.7rem] tracking-[0.12em] text-room-ink-3">الوصف</h2>
           <p class="max-w-prose font-reading text-lg leading-loose text-room-ink-2">
             {product.description}
           </p>
-        </section>
+        </div>
+        <div>
+          {
+            details.map((detail) => (
+              <details class="group border-b border-hairline last:border-b-0">
+                <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 py-3 text-sm text-room-ink transition-colors hover:text-accent-d [&::-webkit-details-marker]:hidden">
+                  {detail.title}
+                  <span
+                    aria-hidden="true"
+                    class="font-data text-lg text-room-ink-3 transition-transform duration-300 group-open:rotate-45 motion-reduce:transition-none"
+                  >
+                    +
+                  </span>
+                </summary>
+                <ul class="space-y-2 pb-4 text-sm leading-relaxed text-room-ink-2">
+                  {detail.points.map((point) => (
+                    <li>{point}</li>
+                  ))}
+                </ul>
+              </details>
+            ))
+          }
+        </div>
       </div>
-    </div>
+    </section>
 
-    <ProductGrid products={related} title="قطع قريبة من هذه" />
+    <ProductGrid products={related} title="قطع قريبة من هذه" rail />
   </main>
 
   <SiteFooter />

@@ -42,6 +42,21 @@
     return () => clearInterval(timer);
   });
 
+  /* The floating bar appears once the real buy row leaves the viewport. */
+  let buyRow = $state<HTMLElement | undefined>(undefined);
+  let barShown = $state(false);
+
+  const updateBar = () => {
+    if (!buyRow) return;
+    barShown = buyRow.getBoundingClientRect().bottom < 96;
+  };
+
+  onMount(() => {
+    updateBar();
+    window.addEventListener('scroll', updateBar, { passive: true });
+    return () => window.removeEventListener('scroll', updateBar);
+  });
+
   const dayPhrase = (count: number): string =>
     count === 1
       ? 'يوم'
@@ -142,7 +157,10 @@
   {:else if variantStock === 0}
     <button type="button" disabled class={buttonClass}>نفد هذا الخيار</button>
   {:else}
-    <div class="flex flex-wrap items-center gap-4">
+    {#if lowStockNote}
+      <p class="text-[0.8rem] text-signal">{lowStockNote}</p>
+    {/if}
+    <div class="flex flex-wrap items-center gap-4" bind:this={buyRow}>
       <label
         class="flex min-h-11 items-center gap-3 border border-hairline bg-exhibit px-3 focus-within:border-outline focus-within:ring-2 focus-within:ring-outline/40"
       >
@@ -170,8 +188,30 @@
         أضف إلى السلة
       </button>
     </div>
-    {#if lowStockNote}
-      <p class="text-[0.8rem] text-signal">{lowStockNote}</p>
-    {/if}
   {/if}
+
+  <div
+    data-buy-bar
+    inert={barShown && !gone ? undefined : true}
+    data-show={barShown && !gone ? '' : undefined}
+    class="fixed inset-x-0 bottom-0 z-40 translate-y-full border-t border-hairline bg-exhibit/95 px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-sm transition-transform duration-300 data-[show]:translate-y-0 motion-reduce:transition-none lg:hidden"
+  >
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-4">
+      <span class="wq-price text-lg text-ink">{money(payPrice)}</span>
+      <button
+        type="button"
+        data-add-to-cart
+        data-product-id={product.id}
+        data-product-sku={product.sku}
+        data-product-slug={product.slug}
+        data-product-name={product.name}
+        data-product-price={payPrice}
+        data-product-image={product.image.thumb ?? product.image.url}
+        data-product-stock={variantStock ?? product.quantity ?? ''}
+        class={buttonClass}
+      >
+        أضف إلى السلة
+      </button>
+    </div>
+  </div>
 </div>
