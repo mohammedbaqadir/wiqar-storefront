@@ -77,7 +77,9 @@ carries it.
 
 ## Brand Commitments
 
-- The name وقار and the Latin wordmark WIỌAR.
+- The wordmark: وقار as drawn outlines (Naseeb letterforms; the ق's two dots are the mark's
+  lozenges). Arabic only — no Latin wordmark in the interface; WIỌAR remains only as the
+  Latin name in the copyright line.
 - The mark: the piece on its plinth — a brass lozenge floating over a hairline rule. It is the
   favicon and sits beside the wordmark in the header and footer.
 - The owner's standard, in the store's own voice: الجودة · الذوق · القيمة.
