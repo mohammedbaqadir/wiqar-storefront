@@ -383,10 +383,10 @@ html[data-world='night'] .bg-signal {
 /* ── motion ───────────────────────────────────────────────────
    The choreography: pages cross-fade with the main column rising,
    pieces morph between grid, hero, rail and page, filtering glides
-   the cards to their slots, the search field becomes the panel,
-   heroes and product stages settle on arrival, and content rises
-   once as it enters the viewport. Every move has a reduced-motion
-   answer: with "reduce" set, the store is completely still. */
+   the cards to their slots, heroes and product stages settle on
+   arrival, and content rises once as it enters the viewport. Every
+   move has a reduced-motion answer: with "reduce" set, the store is
+   completely still. */
 
 /* the moving column */
 main#main {

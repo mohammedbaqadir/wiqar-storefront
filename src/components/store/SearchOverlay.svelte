@@ -45,9 +45,6 @@
   let panelEl = $state<HTMLElement | undefined>(undefined);
   let lastFocused: HTMLElement | null = null;
   let closing = false;
-  let overlayEl = $state<HTMLElement | undefined>(undefined);
-  /** The element the overlay morphs out of — the field or icon just used. */
-  let morphSource: HTMLElement | null = null;
 
   const results = $derived.by(() => {
     const q = query.trim();
@@ -70,42 +67,50 @@
     }));
   };
 
-  const load = async (): Promise<void> => {
+  /* One fetch, wherever the call comes from — intent, idle, or the open itself. */
+  let inFlight: Promise<void> | null = null;
+
+  const load = (): Promise<void> => {
     const w = window as unknown as { __wqSearchItems?: SearchItem[] };
     if (w.__wqSearchItems) {
       items = w.__wqSearchItems;
-      return;
+      return Promise.resolve();
     }
-    loading = true;
-    try {
-      const response = await fetch(CATALOG_URL);
-      const data = (await response.json()) as RawCatalog;
-      const names = new Map((data.categories ?? []).map((category) => [category.id, category.name]));
-      const built = (data.products ?? []).map((product): SearchItem => {
-        const category = names.get(product.category_id) ?? '';
-        return {
-          slug: product.slug,
-          name: product.name,
-          price: product.price,
-          thumb: product.image?.thumb ?? product.image?.url ?? '',
-          category,
-          hay: searchText(
-            product.name,
-            product.description ?? '',
-            product.sku ?? '',
+    if (inFlight) return inFlight;
+    inFlight = (async () => {
+      loading = true;
+      try {
+        const response = await fetch(CATALOG_URL);
+        const data = (await response.json()) as RawCatalog;
+        const names = new Map((data.categories ?? []).map((category) => [category.id, category.name]));
+        const built = (data.products ?? []).map((product): SearchItem => {
+          const category = names.get(product.category_id) ?? '';
+          return {
+            slug: product.slug,
+            name: product.name,
+            price: product.price,
+            thumb: product.image?.thumb ?? product.image?.url ?? '',
             category,
-            ...(product.keywords ?? [])
-          ),
-          label: normalize(product.name),
-        };
-      });
-      w.__wqSearchItems = built;
-      items = built;
-    } catch {
-      /* offline: the overlay answers "no results", never breaks the page */
-    } finally {
-      loading = false;
-    }
+            hay: searchText(
+              product.name,
+              product.description ?? '',
+              product.sku ?? '',
+              category,
+              ...(product.keywords ?? [])
+            ),
+            label: normalize(product.name),
+          };
+        });
+        w.__wqSearchItems = built;
+        items = built;
+      } catch {
+        /* offline: the overlay answers "no results", never breaks the page */
+      } finally {
+        loading = false;
+        inFlight = null;
+      }
+    })();
+    return inFlight;
   };
 
   const rememberRead = () => {
@@ -136,32 +141,7 @@
     query = seed;
     active = -1;
     rememberRead();
-
-    /* The field becomes the panel: one native morph, then the names go back. */
-    const doc = document as Document & {
-      startViewTransition?: (callback: () => void) => { finished: Promise<void> };
-    };
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const source = morphSource;
-    morphSource = null;
-
-    if (!reduce && doc.startViewTransition && source) {
-      source.style.setProperty('view-transition-name', 'wq-search');
-      const transition = doc.startViewTransition(() => {
-        /* The veil must arrive in one beat for the snapshot to see the panel. */
-        overlayEl?.style.setProperty('transition', 'none');
-        open = true;
-        source.style.removeProperty('view-transition-name');
-        panelEl?.style.setProperty('view-transition-name', 'wq-search');
-      });
-      void transition.finished.finally(() => {
-        overlayEl?.style.removeProperty('transition');
-        panelEl?.style.removeProperty('view-transition-name');
-      });
-    } else {
-      open = true;
-    }
-
+    open = true;
     void load();
     queueMicrotask(() => inputEl?.focus());
   };
@@ -231,11 +211,6 @@
     const controller = new AbortController();
     const { signal } = controller;
 
-    const firstVisibleTrigger = () =>
-      Array.from(document.querySelectorAll<HTMLElement>('[data-search-trigger]')).find(
-        (element) => element.offsetParent !== null
-      ) ?? null;
-
     /* Only the newest island keeps document listeners — the drawer's handover. */
     const handover = (window as unknown as { __wqSearchHandover?: () => void }).__wqSearchHandover;
     handover?.();
@@ -249,11 +224,18 @@
         const trigger = target?.closest?.('[data-search-trigger]');
         if (!trigger) return;
         event.preventDefault();
-        morphSource = trigger as HTMLElement;
         show();
       },
       { signal }
     );
+
+    /* Warm on intent: the moment a pointer crosses — or focus lands on — the
+       trigger, the catalogue starts; by the click it is already here. */
+    const intentWarm = (event: Event) => {
+      if ((event.target as Element | null)?.closest?.('[data-search-trigger]')) void load();
+    };
+    document.addEventListener('pointerenter', intentWarm, { capture: true, signal });
+    document.addEventListener('focusin', intentWarm, { signal });
 
     document.addEventListener(
       'input',
@@ -263,7 +245,6 @@
         if (!(target instanceof HTMLInputElement) || !target.matches('[data-search-trigger]')) return;
         const seed = target.value;
         target.value = '';
-        morphSource = target;
         show(seed);
       },
       { signal }
@@ -278,7 +259,6 @@
         }
         if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {
           event.preventDefault();
-          morphSource = firstVisibleTrigger();
           show();
           return;
         }
@@ -289,7 +269,6 @@
             : false;
           if (!typing) {
             event.preventDefault();
-            morphSource = firstVisibleTrigger();
             show();
           }
         }
@@ -309,7 +288,6 @@
 
 <div
   data-search-overlay
-  bind:this={overlayEl}
   inert={!open ? true : undefined}
   data-open={open ? '' : undefined}
   class="pointer-events-none fixed inset-0 z-[60] opacity-0 transition-opacity duration-200 data-[open]:pointer-events-auto data-[open]:opacity-100"
