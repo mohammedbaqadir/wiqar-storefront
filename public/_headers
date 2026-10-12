@@ -1,0 +1,7 @@
+# Fingerprinted bundles, fonts, and styles: cache hard.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Product photography: stable names, replaced file-for-file — a week is right.
+/images/*
+  Cache-Control: public, max-age=604800
