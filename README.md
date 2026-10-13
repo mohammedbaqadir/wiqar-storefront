@@ -1,86 +1,87 @@
 # وقار — Wiqar
 
-A curated goods store — writing, textiles, scent, tableware, leather.
-Arabic-first (RTL), statically built with Astro.
+An Arabic-first (RTL) storefront for a curated goods store — writing, textiles, scent, tableware,
+leather. Statically built, served from Cloudflare's edge, with Salla as the commerce engine.
 
 **Live:** https://wiqar-storefront.directed-countless.workers.dev
 
-## Stack
+`Astro 7` · `Svelte 5` islands · `Tailwind v4 + Starwind` · `Cloudflare Workers + D1` · `TypeScript 6` with `astro check`
 
-- **Astro** (static output) + **TypeScript**; **Bun** for install, build and run
-- **Svelte 5** islands for the interactive parts; **Tailwind CSS v4** + **Starwind UI** for the rest
-- Self-hosted Arabic typefaces: Naseeb, Reem Kufi, Amiri, IBM Plex Arabic / Mono
-- Two worlds (day room default, night room by choice), View Transitions for page motion, `@astrojs/sitemap`
+## What this is
 
-## Structure
+A custom, hand-built storefront for the wiqar store. The catalogue (35 pieces) is presented from this
+repository's own database and design system; **buying is delegated to Salla** through the sibling
+[wiqar-backend](https://github.com/mohammedbaqadir/wiqar-backend) repository. The storefront builds
+and browses without the backend — only checkout needs it.
+
+Everything a visitor sees is generated ahead of time: 46 pages, baked at build time with the
+catalogue inside, served as static files. JavaScript ships in exactly five places — the cart drawer,
+the cart button, the buy box, the search overlay, and the hero — while sorting, filtering, and the
+gallery stay small plain-TypeScript scripts.
+
+## How it works
+
+- **Pages are baked, not computed** — `astro build` renders every page ahead of time; visitors never wait on a server to think.
+- **The catalogue is data** — Cloudflare D1 holds it, the store's own Worker serves it as `/catalog.json`, and the build reads and validates it once.
+- **The cart is local** — cart state lives in `localStorage` behind `src/lib/cart.ts` (plus a small Svelte store); adding to cart never touches a network.
+- **Checkout is a handoff** — `src/lib/checkout.ts` posts the cart (lines identified by SKU) to the backend, which builds a Salla cart and returns Salla's `checkout_url`; the shopper finishes on Salla's hosted checkout.
+- **Two worlds, one shop** — every color is a design token (`src/data/theme.ts`); the day room is the default, the blue-hour night room is opt-in via the footer lamp (or the system's preference).
+- **The edge serves it** — a Cloudflare Worker serves the static files, the `/catalog.json` route, and runs a cron that rebuilds the site when a sale window opens or closes.
+
+## Project map
 
 ```
-src/pages/       routes: home, catalog, category/[slug], product/[slug], search, checkout, 404
-src/layouts/     Base.astro — worlds, meta/OG, skip link, cart island, page transitions
-src/components/  store/ (the shop's own parts) · starwind/ (vendored UI)
+src/pages/       routes: home · catalog · category/[slug] · product/[slug] · search · checkout · 404
+src/layouts/     Base.astro — the worlds, meta/OG, the cart island, page transitions
+src/components/  store/ (the shop's own parts) · starwind/ (vendored UI primitives)
 src/lib/         catalog · cart (+ Svelte store) · checkout · format · structured-data · search · url · validate
-src/worker.ts    the /catalog.json route — D1 in, storefront-shaped JSON out
-src/data/        theme.ts (the two palettes)
-scripts/sale.ts  the sale tool — wrangler against D1
+src/data/        theme.ts — the two palettes (the single source of color)
+src/styles/      world.css (tokens, worlds, motion) · starwind.css (Tailwind mapping) · world-fonts.css
+src/worker.ts    the Worker: static assets, /catalog.json from D1, the sale-edge cron
+scripts/sale.ts  the sale tool — sale windows in D1, in one command
 migrations/      the D1 schema, versioned
-src/assets/      fonts
-src/styles/      world.css (tokens, worlds, motion) · world-fonts.css · starwind.css
-public/images/   product photography (1200px + 600px) · CREDITS.md
+public/images/   product photography (1200px + 600px) with provenance in CREDITS.md
 ```
-
-## How the data flows
-
-Cloudflare D1 `wiqar-products` is the only database. The store's own Worker (`src/worker.ts`)
-serves it as `/catalog.json`; `src/lib/catalog.ts` validates and reads it at build time. Changes go
-through `bun run sale` (or the D1 console) and ping the deploy hook, which rebuilds and publishes;
-a cron on the Worker rebuilds when a sale window opens or closes. Schema changes are versioned in
-`migrations/`; the operations guide is `DATA.md`.
-
-The cart drawer, the header's cart button, the buy box (with its floating bar), and the search
-overlay are Svelte 5 islands; sorting, catalogue filtering, the search page and the gallery stay
-small plain-TypeScript scripts.
-
-## How a purchase leaves the shop
-
-The handoff is real: `src/lib/checkout.ts` posts the cart — lines identified by SKU — to the
-sibling `wiqar-backend`, which builds a Salla cart holding those exact products and answers with
-Salla's `checkout_url`. The shopper finishes on Salla's hosted checkout.
-
-Two boundaries to know:
-
-- **The SKU is the join key** between D1 and Salla. A renamed SKU silently breaks that product's
-  handoff (details in `DATA.md`).
-- **The current store is a Salla demo store.** It accepts carts but refuses to complete orders —
-  Salla's own message: `لا يمكن إتمام الطلب من متجر تجريبي`. Real orders wait on a real Salla
-  store; nothing in this repo changes when that happens.
 
 ## Commands
 
-| | |
+| Command | What it does |
 |---|---|
 | `bun install` | install dependencies |
-| `bun run dev` | dev server (see `AGENTS.md` for background mode) |
-| `bun run build` | build to `dist/` |
+| `bun run dev` | dev server (background mode: see `AGENTS.md`) |
+| `bun run build` | bake all pages to `dist/` |
+| `bun run check` | the type gate — `astro check` across pages, components, and scripts |
 | `bun run preview` | serve the build locally |
-| `bun run sale …` | sales against D1 — see `DATA.md` |
-| `bun run deploy` | build, then deploy to Cloudflare Workers |
+| `bun run sale …` | open or close sale windows in D1 — see `DATA.md` |
+| `bun run deploy` | build, then deploy the Worker (CI does the same on push) |
 
-## Deploy
+## Data, sales, and deploy
 
-On push to `main`, Cloudflare Workers Builds runs `bun run build` and deploys the
-`wiqar-storefront` Worker (config in `wrangler.jsonc`). Data changes republish through the
-deploy hook — the sale tool pings it, and the Worker's cron pings it when a sale window opens
-or closes. The build fails on invalid catalogue rows, so the last good deploy keeps serving.
+Cloudflare D1 (`wiqar-products`) is the storefront's only database, and `migrations/` is the schema
+source; day-to-day operations are documented in `DATA.md`. Sales are data (`sale_price` plus a
+window): `bun run sale` writes them and pings the deploy hook. A cron on the Worker checks every ten
+minutes and rebuilds when a window opens or closes — and the build **fails on invalid catalogue
+rows**, so the last good deploy keeps serving until the data is fixed.
 
-Product photos are placeholder JPEGs in `public/images` (1200px and 600px variants, provenance
-in `CREDITS.md`); D1 stores their paths, and each is replaced by real product photography.
+Two boundaries worth knowing:
 
-## Related project
+- **The SKU is the join key** between D1 and Salla. A renamed SKU silently breaks that product's
+  checkout handoff (details in `DATA.md`).
+- **The current store is a Salla demo store.** It accepts carts but refuses to complete orders —
+  Salla's own message: `لا يمكن إتمام الطلب من متجر تجريبي`. Real orders wait on a real Salla store;
+  nothing in this repository changes when that happens.
 
-One sibling, in its own repository (github.com/mohammedbaqadir/wiqar-backend) — required for
-buying, never for building:
+## Design
 
-- **`wiqar-backend`** — the worker that talks to Salla: tokens, catalogue reads, cart handoff,
-  webhooks. The data seam is `src/lib/catalog.ts` (D1 → pages); the buy seam is
-  `src/lib/checkout.ts` (cart → Salla). Set `PUBLIC_BACKEND_URL` to aim the storefront at a
-  different backend instance.
+Token-driven by construction: every color is named once in `src/data/theme.ts` and repainted by the
+world attribute — which is how day and night are the same shop in two lightings. Arabic-first
+typography (Naseeb, Reem Kufi, Amiri, IBM Plex Arabic / Mono), a brass-and-stone world, an
+outline-drawn wordmark, and View Transitions for page motion. The product truth lives in
+`PRODUCT.md`.
+
+## Related
+
+- **[wiqar-backend](https://github.com/mohammedbaqadir/wiqar-backend)** — the Worker that talks to
+  Salla: tokens, catalogue reads, cart handoff, webhooks. Data seam here: `src/lib/catalog.ts`;
+  buy seam: `src/lib/checkout.ts`. Set `PUBLIC_BACKEND_URL` to aim the storefront at a different
+  backend instance.
