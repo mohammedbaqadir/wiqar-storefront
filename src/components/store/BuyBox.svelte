@@ -79,6 +79,23 @@
   const showCross = $derived(!expired && product.regular_price > product.price);
   const payPrice = $derived(variantPrice ?? (expired ? product.regular_price : product.price));
 
+  /* Quantity: stepped by the − / ＋ buttons, shown as a running total, and read
+     from the field at add time — the drawer finds it by name. */
+  let quantity = $state(1);
+
+  /* The shelf: the chosen variant's stock wins, then the piece's own count.
+     An untracked piece (null) gets a sane ceiling rather than no limit. */
+  const maxQuantity = $derived.by(() => {
+    const tracked =
+      variantStock ?? (product.quantity !== null && product.quantity > 0 ? product.quantity : null);
+    return tracked === null ? 99 : Math.max(1, Math.min(tracked, 99));
+  });
+  const totalPrice = $derived(payPrice * quantity);
+
+  const setQuantity = (value: number): void => {
+    quantity = Math.max(1, Math.min(Math.floor(value) || 1, maxQuantity));
+  };
+
   const countdown = $derived.by(() => {
     if (saleEnd === null || expired) return null;
     const left = saleEnd - now;
@@ -132,7 +149,11 @@
               data-option
               data-option-name={option.name}
               class="peer sr-only"
-              onchange={() => (choice[optionIndex] = valueIndex)}
+              onchange={() => {
+                choice[optionIndex] = valueIndex;
+                /* A different value can have a smaller shelf than the chosen quantity. */
+                setQuantity(quantity);
+              }}
             />
             <span
               class="inline-flex min-h-11 items-center gap-2 border border-hairline px-3 text-sm text-room-ink-2 transition-colors peer-checked:border-outline peer-checked:text-room-ink peer-focus-visible:ring-2 peer-focus-visible:ring-outline/40"
@@ -161,18 +182,45 @@
       <p class="text-[0.8rem] text-signal">{lowStockNote}</p>
     {/if}
     <div class="flex flex-wrap items-center gap-4" bind:this={buyRow}>
-      <label
-        class="flex min-h-11 items-center gap-3 border border-hairline bg-exhibit px-3 focus-within:border-outline focus-within:ring-2 focus-within:ring-outline/40"
-      >
+      <div class="flex min-h-11 items-center gap-3">
         <span class="text-sm text-room-ink-2">الكمية</span>
-        <input
-          type="number"
-          name="quantity"
-          value="1"
-          min="1"
-          class="wq-field-bare w-14 p-0 text-center font-data text-sm text-ink"
-        />
-      </label>
+        <div
+          class="flex min-h-11 items-stretch border border-hairline bg-exhibit focus-within:border-outline focus-within:ring-2 focus-within:ring-outline/40"
+        >
+          <button
+            type="button"
+            class="grid w-11 select-none place-items-center border-e border-hairline text-lg text-room-ink-2 transition-colors hover:text-ink disabled:pointer-events-none disabled:opacity-40"
+            aria-label="أنقص الكمية"
+            disabled={quantity <= 1}
+            onclick={() => setQuantity(quantity - 1)}
+          >
+            −
+          </button>
+          <input
+            type="number"
+            name="quantity"
+            value={quantity}
+            min="1"
+            max={maxQuantity}
+            inputmode="numeric"
+            aria-label="الكمية"
+            onchange={(event) => setQuantity(Number(event.currentTarget.value))}
+            class="wq-field-bare w-12 p-0 text-center font-data text-sm text-ink"
+          />
+          <button
+            type="button"
+            class="grid w-11 select-none place-items-center border-s border-hairline text-lg text-room-ink-2 transition-colors hover:text-ink disabled:pointer-events-none disabled:opacity-40"
+            aria-label="زد الكمية"
+            disabled={quantity >= maxQuantity}
+            onclick={() => setQuantity(quantity + 1)}
+          >
+            +
+          </button>
+        </div>
+      </div>
+      <span class="text-sm text-room-ink-2">
+        المجموع: <span class="wq-price text-base text-room-ink">{money(totalPrice)}</span>
+      </span>
       <button
         type="button"
         data-add-to-cart
@@ -197,7 +245,7 @@
     class="fixed inset-x-0 bottom-0 z-40 translate-y-full border-t border-hairline bg-exhibit/95 px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-sm transition-transform duration-300 data-[show]:translate-y-0 motion-reduce:transition-none lg:hidden"
   >
     <div class="mx-auto flex max-w-6xl items-center justify-between gap-4">
-      <span class="wq-price text-lg text-ink">{money(payPrice)}</span>
+      <span class="wq-price text-lg text-ink">{money(totalPrice)}</span>
       <button
         type="button"
         data-add-to-cart
