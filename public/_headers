@@ -1,7 +1,16 @@
-# Fingerprinted bundles, fonts, and styles: cache hard.
+# Security + caching headers for every static asset (Workers static assets).
+# The CSP hashes pin the inline scripts Astro emits; if those scripts change, refresh them.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-xdms2dHA1+XZ30U4r+Ul8rGg6QgwLEJSs1YN4fPvXCo=' 'sha256-AyfptHQ0OT4EWlbSobvLMBQiqM4ua/iRrdpDX6H4dgU=' 'sha256-QzWFZi+FLIx23tnm9SBU4aEgx4x8DsuASP07mfqol/c=' 'sha256-Ya0pUYrC7nM5Cn/056TyVuEiz6dFGrzmkWzgON0pF0U=' 'sha256-8qymAZs8LAbFhgafbJudiBDxlnv2uFV6FsU7MvVvORI=' 'sha256-Qb8WEdYmP31lwi64S710ak6xo6wEH7uWTneRvzHgjtw=' 'sha256-ppEyiSDSdRDVOf4xlc7lx92h2KMmlR98ub6R5rZRx6s=' 'sha256-qoHVufjMwTiKPQsZkyptQ5HH9TtDmzvSQ7T3UXkH/uc='; style-src 'self' 'unsafe-inline'; img-src 'self' https://wiqar-storefront.directed-countless.workers.dev data:; font-src 'self'; connect-src 'self' https://wiqar-backend.directed-countless.workers.dev; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Cross-Origin-Opener-Policy: same-origin
+  X-Frame-Options: DENY
+
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
 
-# Product photography: stable names, replaced file-for-file — a week is right.
 /images/*
   Cache-Control: public, max-age=604800

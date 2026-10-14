@@ -119,11 +119,22 @@ async function saleEdges(env: Env, since: number, now: number): Promise<string[]
     .map((row) => String(row.sku));
 }
 
+/* Headers for this Worker's own responses (the JSON catalogue). The static
+   pages get the same set, plus a page-specific CSP, from public/_headers. */
+const SECURITY_HEADERS = {
+  'strict-transport-security': 'max-age=31536000; includeSubDomains',
+  'x-content-type-options': 'nosniff',
+  'referrer-policy': 'strict-origin-when-cross-origin',
+  'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
+  'cross-origin-opener-policy': 'same-origin',
+  'x-frame-options': 'DENY',
+  'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+} as const;
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     if (url.pathname !== "/catalog.json") return env.ASSETS.fetch(request);
-
     const [products, categories] = await Promise.all([
       env.CATALOG_DB.prepare("SELECT * FROM products ORDER BY created_at DESC, sku").all<Row>(),
       env.CATALOG_DB.prepare("SELECT id, slug, name FROM categories ORDER BY sort, id").all<Row>(),
@@ -146,6 +157,7 @@ export default {
         headers: {
           'access-control-allow-origin': '*',
           'cache-control': 'public, max-age=300',
+          ...SECURITY_HEADERS,
         },
       }
     );
